@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_primary_ad">#6200EE</color>
+    <color name="color_Primary_Dark_ad">#3700B3</color>
+    <color name="color_accent_ad">#03DAC5</color>
+
+    <color name="ads_white">#ffffff</color>
+
+    <color name="ads_black">#FF000000</color>
+
+
+    <color name="ads_ad_button_color">#4CAF50</color>
+    <color name="ads_native_ad_text_color">#FFFFFF</color>
+    <color name="ads_native_bg">#F6F5F5</color>
+
+</resources>

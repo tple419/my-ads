@@ -1,0 +1,12 @@
+<resources>
+
+    <string name="ads_iron_app_key">85460dcd</string>
+    <string name="ads_loading_ads">Loading ads...</string>
+    <string name="ads_image_desc">image description</string>
+    <string name="ads_icon_desc">icon description</string>
+    <string name="ads_txt_update_now">Update Now</string>
+    <string name="ads_txt_update_our_new_app_now_and_enjoy">Update our new app now and enjoy</string>
+    <string name="ads_txt_install_now">Install Now</string>
+    <string name="ads_txt_install_our_new_app_now_and_enjoy">Install our new app now and enjoy</string>
+    <string name="ads_txt_install_our_new_app_now_and_enjoy_decription">We have transferred our server, so install our new app by clicking the button below to enjoy the new features of app.</string>
+</resources>
