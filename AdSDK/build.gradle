@@ -44,7 +44,7 @@ dependencies {
     //ads
     implementation 'com.google.android.gms:play-services-ads:22.1.0'
     //ironsource
-    implementation 'com.ironsource.sdk:mediationsdk:7.2.6'
+    implementation 'com.ironsource.sdk:mediationsdk:7.3.0.1'
     //Applovin
     implementation 'com.applovin:applovin-sdk:11.9.0'
     //Facebook

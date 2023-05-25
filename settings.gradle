@@ -2,8 +2,11 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
-        jcenter()
         mavenCentral()
+        jcenter()
+        maven {
+            url 'https://android-sdk.is.com/'
+        }
         maven { url 'https://jitpack.io' }
     }
 }
@@ -11,8 +14,11 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
-        jcenter()
         mavenCentral()
+        jcenter()
+        maven {
+            url 'https://android-sdk.is.com/'
+        }
         maven { url 'https://jitpack.io' }
     }
 }

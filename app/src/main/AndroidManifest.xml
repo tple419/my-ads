@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.DeepVpn"
-        tools:replace="android:name,android:networkSecurityConfig"
+        tools:replace="android:networkSecurityConfig"
         tools:targetApi="31">
 
         <activity
@@ -34,13 +34,6 @@
                 android:value="" />
         </activity>
 
-        <service
-            android:name="com.live.deeplib.vpnmodule.AppService"
-            android:exported="true" />
-
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713" />
     </application>
 
 </manifest>
