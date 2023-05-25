@@ -3,11 +3,11 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
-        jcenter()
         maven {
             url 'https://android-sdk.is.com/'
         }
         maven { url 'https://jitpack.io' }
+        jcenter()
     }
 }
 dependencyResolutionManagement {
@@ -15,11 +15,11 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        jcenter()
         maven {
             url 'https://android-sdk.is.com/'
         }
         maven { url 'https://jitpack.io' }
+        jcenter()
     }
 }
 rootProject.name = "tupplesdk"
