@@ -1558,6 +1558,66 @@ public class AppManage {
 
     }
 
+    public void showBannerInvisible(ViewGroup banner_container) {
+
+
+        if (!hasActiveInternetConnection(activity)) {
+            banner_container.setVisibility(View.INVISIBLE);
+            return;
+        }
+
+        if (AdsHelperClass.getAdShowStatus() == 0 || AdsHelperClass.getbannerAdStatus() == 0) {
+            banner_container.setVisibility(View.INVISIBLE);
+            return;
+        }
+
+
+//        SharedPreferences.Editor nativeEditor = mysharedpreferences.edit();
+//        this.admob_b = ADMOB_B1;
+//        nativeEditor.putInt("AdsBannerSwipeCount", 2);
+//        nativeEditor.commit();
+
+//        count_banner++;
+
+
+//        int app_howShowAd = mysharedpreferences.getInt("app_howShowAdBanner", 0);
+//        String adPlatformSequence = mysharedpreferences.getString("app_adPlatformSequenceBanner", "");
+//        String alernateAdShow = mysharedpreferences.getString("app_alernateAdShowBanner", "");
+
+        String adPlatformSequence = AdsHelperClass.getbannerSequence();
+
+        banner_sequence = new ArrayList<String>();
+        if (/*app_howShowAd == 0 && */!adPlatformSequence.isEmpty()) {
+            String adSequence[] = adPlatformSequence.split(",");
+            banner_sequence.addAll(Arrays.asList(adSequence));
+
+        }/* else if (app_howShowAd == 1 && !alernateAdShow.isEmpty()) {
+            String alernateAd[] = alernateAdShow.split(",");
+
+            int index = 0;
+            for (int j = 0; j <= 10; j++) {
+                if (count_banner % alernateAd.length == j) {
+                    index = j;
+                    banner_sequence.add(alernateAd[index]);
+                }
+            }
+
+            String adSequence[] = adPlatformSequence.split(",");
+            for (int j = 0; j < adSequence.length; j++) {
+                if (banner_sequence.size() != 0) {
+                    if (!banner_sequence.get(0).equals(adSequence[j])) {
+                        banner_sequence.add(adSequence[j]);
+                    }
+                }
+            }
+        }*/
+
+        if (banner_sequence.size() != 0) {
+            displayBannerInvisible(banner_sequence.get(0), banner_container);
+        }
+
+    }
+
     private void nextBannerPlatform(ViewGroup banner_container) {
         if (banner_sequence.size() != 0) {
             banner_sequence.remove(0);
@@ -1569,19 +1629,33 @@ public class AppManage {
 
     public void displayBanner(String platform, ViewGroup banner_container) {
         if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
-            showAdmobBanner(banner_container);
+            showAdmobBanner(banner_container, View.GONE);
         } else if (platform.equals(AdsHelperClass.ADX) && AdsHelperClass.getAdXAdStatus() == 1) {
-            showAdxBanner(banner_container);
+            showAdxBanner(banner_container, View.GONE);
         } else if (platform.equals(AdsHelperClass.FACEBOOK) && AdsHelperClass.getFBAdStatus() == 1) {
-            showFBBanner(banner_container);
+            showFBBanner(banner_container, View.GONE);
         } else if (platform.equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
-            showAppLovinBanner(banner_container);
+            showAppLovinBanner(banner_container, View.GONE);
         } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
-            showIronSourceBanner(banner_container);
+            showIronSourceBanner(banner_container, View.GONE);
         }
     }
 
-    private void showAdxBanner(ViewGroup banner_container) {
+    public void displayBannerInvisible(String platform, ViewGroup banner_container) {
+        if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
+            showAdmobBanner(banner_container, View.INVISIBLE);
+        } else if (platform.equals(AdsHelperClass.ADX) && AdsHelperClass.getAdXAdStatus() == 1) {
+            showAdxBanner(banner_container, View.INVISIBLE);
+        } else if (platform.equals(AdsHelperClass.FACEBOOK) && AdsHelperClass.getFBAdStatus() == 1) {
+            showFBBanner(banner_container, View.INVISIBLE);
+        } else if (platform.equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
+            showAppLovinBanner(banner_container, View.INVISIBLE);
+        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+            showIronSourceBanner(banner_container, View.INVISIBLE);
+        }
+    }
+
+    private void showAdxBanner(ViewGroup banner_container, int visibility) {
         if (AdsHelperClass.getAdxBannerId().isEmpty()) {
             return;
         }
@@ -1610,7 +1684,7 @@ public class AppManage {
                 PrintLog(TAG, "onAdFailedToLoad: AdxBanner " + loadAdError.getMessage());
 
                 banner_container.removeAllViews();
-                banner_container.setVisibility(View.GONE);
+                banner_container.setVisibility(visibility);
 
                 nextBannerPlatform(banner_container);
             }
@@ -1649,7 +1723,7 @@ public class AppManage {
 
     }
 
-    private void showAdmobBanner(final ViewGroup banner_container) {
+    private void showAdmobBanner(final ViewGroup banner_container, int visibility) {
         if (AdsHelperClass.getAdmobBannerId().isEmpty()) {
             return;
         }
@@ -1672,7 +1746,7 @@ public class AppManage {
 
 
                 banner_container.removeAllViews();
-                banner_container.setVisibility(View.GONE);
+                banner_container.setVisibility(visibility);
                 nextBannerPlatform(banner_container);
             }
 
@@ -1704,7 +1778,7 @@ public class AppManage {
 
     }
 
-    private void showFBBanner(final ViewGroup banner_container) {
+    private void showFBBanner(final ViewGroup banner_container, int visibility) {
         if (AdsHelperClass.getFBBannerId().isEmpty()) {
             return;
         }
@@ -1717,7 +1791,7 @@ public class AppManage {
                 PrintLog(TAG, "onError:FBBanner " + adError.getErrorMessage());
 
                 banner_container.removeAllViews();
-                banner_container.setVisibility(View.GONE);
+                banner_container.setVisibility(visibility);
                 nextBannerPlatform(banner_container);
             }
 
@@ -1744,7 +1818,7 @@ public class AppManage {
         }).build());
     }
 
-    private void showAppLovinBanner(final ViewGroup banner_container) {
+    private void showAppLovinBanner(final ViewGroup banner_container, int visibility) {
         if (AdsHelperClass.getapplovinbanner().isEmpty()) {
             return;
         }
@@ -1791,7 +1865,7 @@ public class AppManage {
             public void onAdLoadFailed(String adUnitId, MaxError error) {
                 PrintLog(TAG, "onAdLoadFailed:banner " + error.getMessage());
                 banner_container.removeAllViews();
-                banner_container.setVisibility(View.GONE);
+                banner_container.setVisibility(visibility);
                 nextBannerPlatform(banner_container);
 
 
@@ -1813,7 +1887,7 @@ public class AppManage {
 
     }
 
-    private void showIronSourceBanner(ViewGroup banner_container) {
+    private void showIronSourceBanner(ViewGroup banner_container, int visibility) {
         if (AdsHelperClass.getironappkey().isEmpty()) {
             return;
         }
@@ -1839,7 +1913,7 @@ public class AppManage {
 
 
                 banner_container.removeAllViews();
-                banner_container.setVisibility(View.GONE);
+                banner_container.setVisibility(visibility);
                 nextBannerPlatform(banner_container);
 
             }
@@ -1872,18 +1946,6 @@ public class AppManage {
             }
         }
     }
-
-    public void ResumeIronSourceBanner(ViewGroup banner_container, Activity activity) {
-        if (AdsHelperClass.getbannerSequence().equalsIgnoreCase(AdsHelperClass.IRON)) {
-            if (mIronSourceBannerLayout != null) {
-                IronSource.destroyBanner(mIronSourceBannerLayout);
-                showIronSourceBanner(banner_container);
-                IronSource.onResume(activity);
-            }
-        }
-
-    }
-
 
     public void PreLoadNative() {
 
