@@ -48,9 +48,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:textColor="@color/ads_black"
         app:layout_constraintStart_toEndOf="@+id/text_view"
         app:layout_constraintTop_toTopOf="parent"
-        android:textColor="@color/ads_black"
         tools:text="Title" />
 
     <TextView
@@ -59,9 +59,9 @@
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:textColor="@color/ads_black"
-
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+
+        android:textColor="@color/ads_black"
         app:layout_constraintBottom_toBottomOf="@+id/icon_image_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -74,9 +74,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textColor="@color/ads_black"
-
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+
+        android:textColor="@color/ads_black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/icon_image_view"
@@ -86,8 +86,8 @@
         android:id="@+id/media_view_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:minHeight="@dimen/_100sdp"
         android:layout_marginTop="4dp"
+        android:minHeight="@dimen/_100sdp"
         app:layout_constraintBottom_toTopOf="@+id/cta_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -101,11 +101,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:backgroundTint="@color/applovin_sdk_brand_color"
+        android:background="@drawable/ads_click_button"
         android:textColor="@android:color/white"
+        android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteX="8dp"
         tools:text="Install" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -188,7 +188,7 @@ public class AppManage {
         AdsHelperClass.setS_Zip(appData.getS_Zip());
         AdsHelperClass.setBase(appData.getBase());
         AdsHelperClass.setPip_sticker(appData.getPip_sticker());
-        AdsHelperClass.setAlbum_click_enabled(appData.getApp_redirectOtherAppStatus());
+        AdsHelperClass.setAlbum_click_enabled(appData.getAlbum_click_enabled());
         AdsHelperClass.setDirect_review_enable(appData.getDirect_review_enable());
         AdsHelperClass.setReview_popup_count(appData.getReview_popup_count());
         AdsHelperClass.setBanner_display_pager(appData.getBanner_display_pager());

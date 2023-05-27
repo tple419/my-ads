@@ -149,7 +149,7 @@
                 android:textColor="@color/ads_native_ad_text_color"
                 android:background="@drawable/ads_click_button"
                 android:includeFontPadding="false"
-                android:textSize="18sp" />
+                android:textSize="15sp" />
         </LinearLayout>
     </LinearLayout>
 </com.google.android.gms.ads.nativead.NativeAdView>

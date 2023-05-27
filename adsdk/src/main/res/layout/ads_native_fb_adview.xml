@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.facebook.ads.NativeAdLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<com.facebook.ads.NativeAdLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/nativeAdLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,33 +11,29 @@
         android:background="@color/ads_native_bg"
         android:orientation="vertical"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        >
+        android:paddingRight="10dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
-            android:orientation="horizontal"
-            android:weightSum="1"
-            >
+            android:weightSum="1">
 
             <com.facebook.ads.MediaView
                 android:id="@+id/native_ad_icon"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
-                android:contentDescription="@string/ads_icon_desc"
-                />
+                android:contentDescription="@string/ads_icon_desc" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:orientation="vertical"
                 android:layout_weight="0.7"
-                >
+                android:orientation="vertical"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp">
 
                 <TextView
                     android:id="@+id/native_ad_title"
@@ -47,8 +42,7 @@
                     android:ellipsize="end"
                     android:lines="1"
                     android:textColor="@android:color/black"
-                    android:textSize="15sp"
-                    />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/native_ad_sponsored_label"
@@ -57,8 +51,7 @@
                     android:ellipsize="end"
                     android:lines="1"
                     android:textColor="@android:color/darker_gray"
-                    android:textSize="12sp"
-                    />
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
@@ -66,10 +59,9 @@
                 android:id="@+id/ad_choices_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="end"
-                android:orientation="horizontal"
                 android:layout_weight="0.3"
-                />
+                android:gravity="end"
+                android:orientation="horizontal" />
 
         </LinearLayout>
 
@@ -79,22 +71,19 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:contentDescription="@string/ads_image_desc"
-            android:gravity="center"
-            />
+            android:gravity="center" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="5dp"
-            >
+            android:padding="5dp">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/native_ad_social_context"
@@ -103,8 +92,7 @@
                     android:ellipsize="end"
                     android:lines="1"
                     android:textColor="@android:color/darker_gray"
-                    android:textSize="12sp"
-                    />
+                    android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/native_ad_body"
@@ -114,8 +102,7 @@
                     android:gravity="center_vertical"
                     android:lines="2"
                     android:textColor="@android:color/black"
-                    android:textSize="12sp"
-                    />
+                    android:textSize="12sp" />
 
             </LinearLayout>
 
@@ -123,15 +110,14 @@
                 android:id="@+id/native_ad_call_to_action"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_weight="1"
                 android:layout_gravity="center_vertical"
-                android:background="#4286F4"
-                android:textSize="12sp"
-                android:textColor="@android:color/white"
+                android:layout_weight="1"
+                android:background="@drawable/ads_click_button"
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
-                android:visibility="gone"
-                />
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:visibility="gone" />
 
         </LinearLayout>
 

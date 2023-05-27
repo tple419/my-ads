@@ -35,15 +35,12 @@ public class AdsHelperClass {
         txt_decription.setText("");
         txt_decription.setVisibility(View.GONE);
 
-        update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                try {
-                    Uri marketUri = Uri.parse(s);
-                    Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
-                    activity.startActivity(marketIntent);
-                } catch (ActivityNotFoundException e) {
-                }
+        update.setOnClickListener(view1 -> {
+            try {
+                Uri marketUri = Uri.parse(s);
+                Intent marketIntent = new Intent(Intent.ACTION_VIEW, marketUri);
+                activity.startActivity(marketIntent);
+            } catch (ActivityNotFoundException e) {
             }
         });
 
