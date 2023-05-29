@@ -574,9 +574,9 @@ public class AppManage {
                     public void onAdHidden(MaxAd ad) {
                         PrintLog(TAG, "Applovin InterstitialAd ===> onAdHidden");
 
-                        interstitialCallBack();
                         AdsHelperClass.isShowingFullScreenAd = false;
                         AdsHelperClass.isIsShowingFullScreenAdSplash = false;
+                        interstitialCallBack();
 
                     }
 
@@ -644,9 +644,10 @@ public class AppManage {
 
                     @Override
                     public void onInterstitialAdClosed() {
-                        interstitialCallBack();
+
                         AdsHelperClass.isShowingFullScreenAd = false;
                         AdsHelperClass.isIsShowingFullScreenAdSplash = false;
+                        interstitialCallBack();
 
                     }
 
@@ -697,8 +698,6 @@ public class AppManage {
                         PrintLog(TAG, "The ad was dismissed.");
                         AdsHelperClass.isShowingFullScreenAd = false;
                         interstitialCallBack();
-
-
                     }
 
                     @Override
@@ -803,9 +802,8 @@ public class AppManage {
 
                     @Override
                     public void onAdHidden(MaxAd ad) {
-
-                        interstitialCallBack();
                         AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
 
                     }
 
@@ -1137,8 +1135,8 @@ public class AppManage {
 
                 @Override
                 public void onAdHidden(MaxAd ad) {
-                    interstitialCallBack();
                     AdsHelperClass.isShowingFullScreenAd = false;
+                    interstitialCallBack();
 
                 }
 
@@ -1384,10 +1382,10 @@ public class AppManage {
 
                 @Override
                 public void onAdHidden(MaxAd ad) {
-                    interstitialCallBack();
+
                     AdsHelperClass.isShowingFullScreenAd = false;
                     AdsHelperClass.isIsShowingFullScreenAdSplash = false;
-
+                    interstitialCallBack();
                 }
 
                 @Override
