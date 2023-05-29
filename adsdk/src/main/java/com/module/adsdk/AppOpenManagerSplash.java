@@ -161,9 +161,9 @@ public class AppOpenManagerSplash implements Application.ActivityLifecycleCallba
             listner.onSuccess();
             return;
         }
+
         if (isAdAvailable()) {
             PrintLog(LOG_TAG, "fetchAd: ");
-
              listner.onSuccess();
             return;
         }
@@ -255,6 +255,9 @@ public class AppOpenManagerSplash implements Application.ActivityLifecycleCallba
             };
             appOpenAdApplovin.setListener(maxAdListener);
             appOpenAdApplovin.loadAd();
+        }else {
+            PrintLog(LOG_TAG, "ad Type: "+AdsHelperClass.getAppOpenSequence());
+            listner.onSuccess();
         }
 
     }
