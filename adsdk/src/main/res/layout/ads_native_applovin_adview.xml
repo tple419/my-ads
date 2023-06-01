@@ -94,7 +94,6 @@
             android:id="@+id/body_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:layout_weight="3"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1"
             android:textColor="@color/ads_black"
