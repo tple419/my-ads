@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
 import android.view.View;
@@ -1235,7 +1236,6 @@ public class AppManage {
     }
 
     private void displayInterstitialAdsSplash(String platform, final Context activity) {
-
         if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
             if (TextUtils.isEmpty(AdsHelperClass.getAdmobInterId())) {
                 return;
@@ -1365,13 +1365,10 @@ public class AppManage {
                 return;
             }
             appLovin_interstitialAd = new MaxInterstitialAd(AdsHelperClass.getapplovininter(), (Activity) activity);
-            appLovin_interstitialAd.loadAd();
-
             appLovin_interstitialAd.setListener(new MaxAdListener() {
                 @Override
                 public void onAdLoaded(MaxAd ad) {
                     PrintLog(TAG, "Applovin InterstitialAd ===> onAdLoaded");
-
                     displayInterstitialAdSplash(AdsHelperClass.APPLOVIN, activity);
                 }
 
@@ -1385,7 +1382,6 @@ public class AppManage {
 
                 @Override
                 public void onAdHidden(MaxAd ad) {
-
                     AdsHelperClass.isShowingFullScreenAd = false;
                     AdsHelperClass.isIsShowingFullScreenAdSplash = false;
                     interstitialCallBack();
@@ -1398,7 +1394,6 @@ public class AppManage {
                 @Override
                 public void onAdLoadFailed(String adUnitId, MaxError error) {
                     PrintLog(TAG, "Applovin onAdLoadFailed ===> onAdLoadFailed" + error.getMessage());
-
                     appLovin_interstitialAd = null;
 
                 /*    AdsHelperClass.isShowingFullScreenAd = false;
@@ -1411,7 +1406,6 @@ public class AppManage {
                 @Override
                 public void onAdDisplayFailed(MaxAd ad, MaxError error) {
                     PrintLog(TAG, "Applovin onAdDisplayFailed ===> onAdDisplayFailed" + error.getMessage());
-
                     appLovin_interstitialAd = null;
 
                    /* AdsHelperClass.isShowingFullScreenAd = false;
@@ -1422,6 +1416,8 @@ public class AppManage {
 
                 }
             });
+            appLovin_interstitialAd.loadAd();
+
 
 
         } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
@@ -1492,7 +1488,6 @@ public class AppManage {
     }
 
     public void interstitialCallBack() {
-
         if (intermyCallback != null) {
             intermyCallback.callbackCall();
             intermyCallback = null;
