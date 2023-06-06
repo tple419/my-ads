@@ -155,6 +155,9 @@ public class AdsModel {
     @SerializedName("InterSequence")
     @Expose
     private String inter_sequence;
+ @SerializedName("splashAdsSequence")
+    @Expose
+    private String splashAdsSequence;
 
     @SerializedName("AppOpenSequence")
     @Expose
@@ -718,6 +721,14 @@ public class AdsModel {
 
     public void setInter_sequence(String inter_sequence) {
         this.inter_sequence = inter_sequence;
+    }
+
+    public String getSplashAdsSequence() {
+        return splashAdsSequence;
+    }
+
+    public void setSplashAdsSequence(String splashAdsSequence) {
+        this.splashAdsSequence = splashAdsSequence;
     }
 
     public int getSplash_ad_type() {

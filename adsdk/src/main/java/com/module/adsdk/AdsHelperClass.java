@@ -414,6 +414,13 @@ public class AdsHelperClass {
     public static void setInterSequence(String i) {
         SharedPreferencesClass.getInstance().setString("InterSequence", i);
     }
+public static String getSplashAdsSequence() {
+        return SharedPreferencesClass.getInstance().getString("SplashAdsSequence", "");
+    }
+
+    public static void setSplashAdsSequence(String i) {
+        SharedPreferencesClass.getInstance().setString("SplashAdsSequence", i);
+    }
 
     public static String getAppOpenSequence() {
         return SharedPreferencesClass.getInstance().getString("AppOpenSequence", "");

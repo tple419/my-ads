@@ -171,6 +171,7 @@ public class AppManage {
         AdsHelperClass.setbannerSequence(appData.getBanner_sequence());
         AdsHelperClass.setnativeSequence(appData.getNative_sequence());
         AdsHelperClass.setInterSequence(appData.getInter_sequence());
+        AdsHelperClass.setSplashAdsSequence(appData.getSplashAdsSequence());
         AdsHelperClass.setAppOpenSequence(appData.getAppOpen_sequence());
         AdsHelperClass.setapp_newPackageName(appData.getApp_newPackageName());
         AdsHelperClass.setapp_redirectOtherAppStatus(appData.getApp_redirectOtherAppStatus());
@@ -422,7 +423,7 @@ public class AppManage {
         }
 
 
-        String adPlatformSequence = AdsHelperClass.getInterSequence();
+        String adPlatformSequence = AdsHelperClass.getSplashAdsSequence();
 
 
         interstitial_sequence = new ArrayList<String>();
