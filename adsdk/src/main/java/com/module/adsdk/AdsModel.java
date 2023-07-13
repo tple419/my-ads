@@ -8,6 +8,12 @@ public class AdsModel {
     @SerializedName("Id")
     @Expose
     private int id;
+    @SerializedName("isPreloadSplashAd")
+    @Expose
+    private int isPreloadSplashAd = 0;
+@SerializedName("isBannerSpaceVisible")
+    @Expose
+    private int isBannerSpaceVisible = 0;
 
     @SerializedName("AdShowStatus")
     @Expose
@@ -155,7 +161,7 @@ public class AdsModel {
     @SerializedName("InterSequence")
     @Expose
     private String inter_sequence;
- @SerializedName("splashAdsSequence")
+    @SerializedName("splashAdsSequence")
     @Expose
     private String splashAdsSequence;
 
@@ -253,6 +259,9 @@ public class AdsModel {
     @SerializedName("s_api")
     @Expose
     private String s_api;
+    @SerializedName("app_updateAppDialogStatus")
+    @Expose
+    private int app_updateAppDialogStatus;
 
     public int getNative_display_list() {
         return native_display_list;
@@ -405,10 +414,6 @@ public class AdsModel {
     public void setApp_email_id(String app_email_id) {
         this.app_email_id = app_email_id;
     }
-
-    @SerializedName("app_updateAppDialogStatus")
-    @Expose
-    private int app_updateAppDialogStatus;
 
     public String getApp_versionCode() {
         return app_versionCode;
@@ -751,7 +756,23 @@ public class AdsModel {
         return splash_time;
     }
 
+    public int getIsBannerSpaceVisible() {
+        return isBannerSpaceVisible;
+    }
+
+    public void setIsBannerSpaceVisible(int isBannerSpaceVisible) {
+        this.isBannerSpaceVisible = isBannerSpaceVisible;
+    }
+
     public void setSplash_time(int splash_time) {
         this.splash_time = splash_time;
+    }
+
+    public int getIsPreloadSplashAd() {
+        return isPreloadSplashAd;
+    }
+
+    public void setIsPreloadSplashAd(int isPreloadSplashAd) {
+        this.isPreloadSplashAd = isPreloadSplashAd;
     }
 }

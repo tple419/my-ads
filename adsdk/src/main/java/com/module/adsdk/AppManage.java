@@ -84,12 +84,16 @@ public class AppManage {
     static MyInterstitialCallback intermyCallback;
     private static AppManage mInstance;
     public AdManagerInterstitialAd mAdManagerInterstitialAd;
+    public AdManagerInterstitialAd mAdManagerInterstitialAdPre;
     ArrayList<String> banner_sequence = new ArrayList<>();
     ArrayList<String> native_sequence = new ArrayList<>();
     ArrayList<String> interstitial_sequence = new ArrayList<>();
     private InterstitialAd mInterstitialAd;
+    private InterstitialAd mInterstitialAdPre = null;
     private com.facebook.ads.InterstitialAd mFbInterstitialAd;
+    private com.facebook.ads.InterstitialAd mFbInterstitialAdPre = null;
     private MaxInterstitialAd appLovin_interstitialAd;
+    private MaxInterstitialAd appLovin_interstitialAdPre = null;
     private Dialog dialog;
     IronSourceBannerLayout mIronSourceBannerLayout;
     IronSourceBannerLayout mIronSourceNativeLayout;
@@ -181,6 +185,8 @@ public class AppManage {
         AdsHelperClass.setapp_policy_url(appData.getApp_policy_url());
         AdsHelperClass.setIn_appreview(appData.getIn_appreview());
         AdsHelperClass.setFirst_ad_hide(appData.getFirst_ad_hide());
+        AdsHelperClass.setIsPreloadSplashAd(appData.getIsPreloadSplashAd());
+        AdsHelperClass.setIsBannerSpaceVisible(appData.getIsBannerSpaceVisible());
 
         /*New field*/
         AdsHelperClass.setS_api(appData.getS_api());
@@ -387,6 +393,28 @@ public class AppManage {
         }
     }
 
+    private void loadNextPreInterstitialPlatformSplash() {
+        hideDialog();
+        if (interstitial_sequence.size() != 0) {
+            interstitial_sequence.remove(0);
+
+            if (interstitial_sequence.size() != 0 && interstitial_sequence.get(0) != null) {
+                PrintLog(TAG, "loadNextInterstitialPlatformSplash: " + interstitial_sequence);
+                displayInterstitialAdsSplash(interstitial_sequence.get(0), activity);
+            } else {
+                PrintLog(TAG, "loadNextInterstitialPlatformSplash: " + interstitial_sequence);
+                AdsHelperClass.isShowingFullScreenAd = false;
+                AdsHelperClass.isIsShowingFullScreenAdSplash = false;
+                interstitialCallBack();
+            }
+        } else {
+            AdsHelperClass.isShowingFullScreenAd = false;
+            AdsHelperClass.isIsShowingFullScreenAdSplash = false;
+            interstitialCallBack();
+        }
+    }
+
+
 
     public void showInterstitialAd(Context context, MyInterstitialCallback myCallback) {
         turnInterstitialAd(context, myCallback, 0);
@@ -399,6 +427,10 @@ public class AppManage {
 
     public void showInterstitialAdSplash(Context context, MyInterstitialCallback myCallback) {
         turnInterstitialAdSplash(context, myCallback);
+
+    }
+    public void showPreLoadInterstitialAdSplash(Context context, MyInterstitialCallback myCallback) {
+        turnPreInterstitialAdSplash(context,myCallback);
 
     }
 
@@ -442,6 +474,53 @@ public class AppManage {
             interstitialCallBack();
         }
 
+    }
+
+
+    public void turnPreInterstitialAdSplash(Context context, MyInterstitialCallback myCallback2) {
+        intermyCallback = myCallback2;
+
+        if (!hasActiveInternetConnection(activity) || AdsHelperClass.getAdShowStatus() == 0 || AdsHelperClass.getinterAdStatus() == 0 || AdsHelperClass.getIs_splash_on() == 0) {
+            if (intermyCallback != null) {
+                intermyCallback.callbackCall();
+                intermyCallback = null;
+            }
+            return;
+        }
+
+
+        if (AdsHelperClass.getFirst_ad_hide() == 1 && AdsHelperClass.getInstanceCount() == 1) {
+            if (intermyCallback != null) {
+                intermyCallback.callbackCall();
+                intermyCallback = null;
+            }
+            return;
+        }
+
+
+        String adPlatformSequence = AdsHelperClass.getSplashAdsSequence();
+
+
+        interstitial_sequence = new ArrayList<String>();
+        if (!adPlatformSequence.isEmpty()) {
+            String adSequence[] = adPlatformSequence.split(",");
+            interstitial_sequence.addAll(Arrays.asList(adSequence));
+        }else {
+            if (intermyCallback != null) {
+                intermyCallback.callbackCall();
+                intermyCallback = null;
+            }
+            return;
+        }
+
+        if (interstitial_sequence.size() != 0) {
+            loadPreInterstitialAdsSplash(interstitial_sequence.get(0), context);
+        }else {
+            if (intermyCallback != null) {
+                intermyCallback.callbackCall();
+                intermyCallback = null;
+            }
+        }
     }
 
 
@@ -901,6 +980,187 @@ public class AppManage {
         }
     }
 
+    private void displayPreInterstitialAd(String platform, final Context context) {
+
+        if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
+
+            if (mInterstitialAdPre != null) {
+
+                mInterstitialAdPre.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        // Called when fullscreen content is dismissed.
+                        PrintLog(TAG, "The ad was dismissed.");
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(com.google.android.gms.ads.AdError adError) {
+                        // Called when fullscreen content failed to show.
+                        PrintLog(TAG, "The ad failed to show.");
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        // Called when fullscreen content is shown.
+                        // Make sure to set your reference to null so you don't
+                        // show it a second time.
+                        mInterstitialAdPre = null;
+                        AdsHelperClass.isShowingFullScreenAd = true;
+                        PrintLog(TAG, "The ad was shown.");
+                    }
+                });
+                mInterstitialAdPre.show((Activity) context);
+            } else {
+                interstitialCallBack();
+            }
+
+        } else if (platform.equals(AdsHelperClass.FACEBOOK) && AdsHelperClass.getFBAdStatus() == 1) {
+
+            if (mFbInterstitialAdPre != null) {
+                mFbInterstitialAdPre.show();
+            } else {
+                interstitialCallBack();
+            }
+
+        } else if (platform.equals(AdsHelperClass.ADX) && AdsHelperClass.getAdXAdStatus() == 1) {
+
+            if (mAdManagerInterstitialAdPre != null) {
+
+                mAdManagerInterstitialAdPre.setFullScreenContentCallback(new FullScreenContentCallback() {
+                    @Override
+                    public void onAdDismissedFullScreenContent() {
+                        // Called when fullscreen content is dismissed.
+                        PrintLog(TAG, "The ad was dismissed.");
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+                    }
+
+                    @Override
+                    public void onAdFailedToShowFullScreenContent(com.google.android.gms.ads.AdError adError) {
+                        // Called when fullscreen content failed to show.
+                        PrintLog(TAG, "The ad failed to show.");
+                        loadNextInterstitialPlatform();
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+                    }
+
+                    @Override
+                    public void onAdShowedFullScreenContent() {
+                        mAdManagerInterstitialAdPre = null;
+                        AdsHelperClass.isShowingFullScreenAd = true;
+                        PrintLog(TAG, "The ad was shown.");
+                    }
+                });
+                mAdManagerInterstitialAdPre.show((Activity) context);
+            } else {
+                interstitialCallBack();
+            }
+
+        } else if (platform.equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
+
+            if (appLovin_interstitialAdPre != null && appLovin_interstitialAdPre.isReady()) {
+                appLovin_interstitialAdPre.setListener(new MaxAdListener() {
+                    @Override
+                    public void onAdLoaded(MaxAd ad) {
+                        PrintLog(TAG, "Applovin InterstitialAd ===> onAdLoaded");
+                    }
+
+                    @Override
+                    public void onAdDisplayed(MaxAd ad) {
+                        appLovin_interstitialAdPre = null;
+                        AdsHelperClass.isShowingFullScreenAd = true;
+
+                    }
+
+                    @Override
+                    public void onAdHidden(MaxAd ad) {
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+
+                    }
+
+                    @Override
+                    public void onAdClicked(MaxAd ad) {
+                    }
+
+                    @Override
+                    public void onAdLoadFailed(String adUnitId, MaxError error) {
+                        PrintLog(TAG, "onAdLoadFailed: " + error.getMessage());
+                        appLovin_interstitialAdPre = null;
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+                    }
+
+                    @Override
+                    public void onAdDisplayFailed(MaxAd ad, MaxError error) {
+                        PrintLog(TAG, "onAdDisplayFailed: " + error.getMessage());
+                        appLovin_interstitialAdPre = null;
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+                    }
+                });
+                appLovin_interstitialAdPre.showAd();
+            } else {
+                interstitialCallBack();
+            }
+
+        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+            if (IronSource.isInterstitialReady()) {
+                IronSource.setInterstitialListener(new InterstitialListener() {
+                    @Override
+                    public void onInterstitialAdReady() {
+                    }
+
+                    @Override
+                    public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
+                        PrintLog(TAG, "onInterstitialAdLoadFailed: " + ironSourceError.getErrorMessage());
+
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+                    }
+
+                    @Override
+                    public void onInterstitialAdOpened() {
+                        AdsHelperClass.isShowingFullScreenAd = true;
+
+                    }
+
+                    @Override
+                    public void onInterstitialAdClosed() {
+
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+                    }
+
+                    @Override
+                    public void onInterstitialAdShowSucceeded() {
+                    }
+
+                    @Override
+                    public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
+                        PrintLog(TAG, "onInterstitialAdShowFailed: " + ironSourceError.getErrorMessage());
+                        AdsHelperClass.isShowingFullScreenAd = false;
+                        interstitialCallBack();
+                    }
+
+                    @Override
+                    public void onInterstitialAdClicked() {
+
+                    }
+                });
+                IronSource.showInterstitial();
+            } else {
+                interstitialCallBack();
+            }
+        } else {
+            interstitialCallBack();
+        }
+    }
+
     public void turnInterstitialAd(Context context, MyInterstitialCallback myCallback2, int how_many_clicks) {
         intermyCallback = myCallback2;
 
@@ -936,33 +1196,48 @@ public class AppManage {
             return;
         }
 
+        //preload things to show
+        if (mInterstitialAdPre != null && AdsHelperClass.getAdmobAdStatus() == 1) {
+            displayPreInterstitialAd(AdsHelperClass.ADMOB, activity);
+        } else if (mAdManagerInterstitialAdPre != null && AdsHelperClass.getAdXAdStatus() == 1) {
+            displayPreInterstitialAd(AdsHelperClass.ADX, activity);
+        } else if (mFbInterstitialAdPre != null && AdsHelperClass.getFBAdStatus() == 1) {
+            displayPreInterstitialAd(AdsHelperClass.FACEBOOK, activity);
+        } else if (appLovin_interstitialAdPre != null && AdsHelperClass.getApplovinAdStatus() == 1) {
+            displayPreInterstitialAd(AdsHelperClass.APPLOVIN, activity);
+        } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+            displayPreInterstitialAd(AdsHelperClass.IRON, activity);
+        }*/
 
-        if (how_many_clicks != 0) {
-            if (count_click % how_many_clicks != 0) {
-                if (intermyCallback != null) {
-                    intermyCallback.callbackCall();
-                    intermyCallback = null;
+else {
+
+            if (how_many_clicks != 0) {
+                if (count_click % how_many_clicks != 0) {
+                    if (intermyCallback != null) {
+                        intermyCallback.callbackCall();
+                        intermyCallback = null;
+                    }
+                    return;
                 }
-                return;
             }
-        }
 
-        String adPlatformSequence = AdsHelperClass.getInterSequence();
-
-
-        interstitial_sequence = new ArrayList<String>();
-        if (/*app_howShowAd == 0 && */!adPlatformSequence.isEmpty()) {
-            String adSequence[] = adPlatformSequence.split(",");
-
-            interstitial_sequence.addAll(Arrays.asList(adSequence));
-
-        }
+            String adPlatformSequence = AdsHelperClass.getInterSequence();
 
 
-        if (interstitial_sequence.size() != 0) {
-            displayInterstitialAds(interstitial_sequence.get(0), context);
-        } else {
-            interstitialCallBack();
+            interstitial_sequence = new ArrayList<String>();
+            if (/*app_howShowAd == 0 && */!adPlatformSequence.isEmpty()) {
+                String adSequence[] = adPlatformSequence.split(",");
+
+                interstitial_sequence.addAll(Arrays.asList(adSequence));
+
+            }
+
+
+            if (interstitial_sequence.size() != 0) {
+                displayInterstitialAds(interstitial_sequence.get(0), context);
+            } else {
+                interstitialCallBack();
+            }
         }
 
     }
@@ -1235,6 +1510,199 @@ public class AppManage {
             interstitialCallBack();
         }
     }
+    private void loadPreInterstitialAdsSplash(String platform, final Context activity) {
+        if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
+            if (TextUtils.isEmpty(AdsHelperClass.getAdmobInterId())) {
+                interstitialCallBack();
+                return;
+            }
+            AdRequest adRequest = new AdRequest.Builder().build();
+
+            InterstitialAd.load(activity, AdsHelperClass.getAdmobInterId(), adRequest, new InterstitialAdLoadCallback() {
+                @Override
+                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                    // The mInterstitialAd reference will be null until
+                    // an ad is loaded.
+                    mInterstitialAdPre = interstitialAd;
+                    PrintLog(TAG, "onAdLoaded");
+                    interstitialCallBack();
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    // Handle the error
+                    PrintLog(TAG, loadAdError.getMessage());
+                    mInterstitialAdPre = null;
+                    loadNextPreInterstitialPlatformSplash();
+                }
+            });
+
+
+        } else if (platform.equals(AdsHelperClass.FACEBOOK) && AdsHelperClass.getFBAdStatus() == 1) {
+            if (TextUtils.isEmpty(AdsHelperClass.getFBInterId())) {
+                return;
+            }
+
+            mFbInterstitialAdPre = new com.facebook.ads.InterstitialAd(activity, AdsHelperClass.getFBInterId());
+            mFbInterstitialAdPre.loadAd(mFbInterstitialAdPre.buildLoadAdConfig().withAdListener(new InterstitialAdListener() {
+                @Override
+                public void onInterstitialDisplayed(Ad ad) {
+                    mFbInterstitialAdPre = null;
+                    PrintLog(TAG, "The ad was shown.");
+                    AdsHelperClass.isShowingFullScreenAd = true;
+                    AdsHelperClass.isIsShowingFullScreenAdSplash = true;
+                    PrintLog(TAG, "The ad was shown.");
+                }
+
+                @Override
+                public void onInterstitialDismissed(Ad ad) {
+                    PrintLog(TAG, "The ad was dismissed.");
+                    mFbInterstitialAdPre = null;
+                    AdsHelperClass.isShowingFullScreenAd = false;
+                    AdsHelperClass.isIsShowingFullScreenAdSplash = false;
+
+                    interstitialCallBack();
+                }
+
+                @Override
+                public void onError(Ad ad, AdError adError) {
+                    PrintLog(TAG, adError.getErrorMessage());
+                    mFbInterstitialAdPre = null;
+                    loadNextPreInterstitialPlatformSplash();
+                }
+
+                @Override
+                public void onAdLoaded(Ad ad) {
+                    mFbInterstitialAdPre = (com.facebook.ads.InterstitialAd) ad;
+                    PrintLog(TAG, "onAdLoaded");
+                    interstitialCallBack();
+                }
+
+                @Override
+                public void onAdClicked(Ad ad) {
+
+                }
+
+                @Override
+                public void onLoggingImpression(Ad ad) {
+
+                }
+            }).build());
+        } else if (platform.equals(AdsHelperClass.ADX) && AdsHelperClass.getAdXAdStatus() == 1) {
+            if (TextUtils.isEmpty(AdsHelperClass.getAdxInterId())) {
+                return;
+            }
+            AdManagerAdRequest adManagerAdRequest = new AdManagerAdRequest.Builder().build();
+            AdManagerInterstitialAd.load(activity, AdsHelperClass.getAdxInterId(), adManagerAdRequest,
+                    new AdManagerInterstitialAdLoadCallback() {
+                        @Override
+                        public void onAdLoaded(@NonNull AdManagerInterstitialAd interstitialAd) {
+                            mAdManagerInterstitialAdPre = interstitialAd;
+                            interstitialCallBack();
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                            // Handle the error
+                            PrintLog(TAG, "onAdFailedToLoad: " + loadAdError.getMessage());
+
+                            mAdManagerInterstitialAdPre = null;
+
+                            loadNextPreInterstitialPlatformSplash();
+
+                        }
+                    });
+
+
+        } else if (platform.equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
+            if (TextUtils.isEmpty(AdsHelperClass.getapplovininter())) {
+                return;
+            }
+            appLovin_interstitialAdPre = new MaxInterstitialAd(AdsHelperClass.getapplovininter(), (Activity) activity);
+            appLovin_interstitialAdPre.setListener(new MaxAdListener() {
+                @Override
+                public void onAdLoaded(MaxAd ad) {
+                    PrintLog(TAG, "Applovin InterstitialAd ===> onAdLoaded");
+                    interstitialCallBack();
+                }
+
+                @Override
+                public void onAdDisplayed(MaxAd ad) {
+                    appLovin_interstitialAdPre = null;
+                }
+
+                @Override
+                public void onAdHidden(MaxAd ad) {
+
+                }
+
+                @Override
+                public void onAdClicked(MaxAd ad) {
+                }
+
+                @Override
+                public void onAdLoadFailed(String adUnitId, MaxError error) {
+                    PrintLog(TAG, "Applovin onAdLoadFailed ===> onAdLoadFailed" + error.getMessage());
+                    appLovin_interstitialAdPre = null;
+                    loadNextPreInterstitialPlatformSplash();
+                }
+
+                @Override
+                public void onAdDisplayFailed(MaxAd ad, MaxError error) {
+                    PrintLog(TAG, "Applovin onAdDisplayFailed ===> onAdDisplayFailed" + error.getMessage());
+                    appLovin_interstitialAd = null;
+                    loadNextPreInterstitialPlatformSplash();
+                }
+            });
+            appLovin_interstitialAd.loadAd();
+
+
+
+        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+            if (TextUtils.isEmpty(AdsHelperClass.getironappkey())) {
+                return;
+            }
+            IronSource.loadInterstitial();
+            IronSource.setInterstitialListener(new InterstitialListener() {
+                @Override
+                public void onInterstitialAdReady() {
+                    interstitialCallBack();
+                }
+
+                @Override
+                public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
+                    PrintLog(TAG, "onInterstitialAdLoadFailed: " + ironSourceError.getErrorMessage());
+                    loadNextPreInterstitialPlatformSplash();
+                }
+
+                @Override
+                public void onInterstitialAdOpened() {
+                }
+
+                @Override
+                public void onInterstitialAdClosed() {
+                }
+
+                @Override
+                public void onInterstitialAdShowSucceeded() {
+
+                }
+
+                @Override
+                public void onInterstitialAdShowFailed(IronSourceError ironSourceError) {
+                    PrintLog(TAG, "onInterstitialAdShowFailed: " + ironSourceError.getErrorMessage());
+                    loadNextPreInterstitialPlatformSplash();
+
+                }
+
+                @Override
+                public void onInterstitialAdClicked() {
+
+                }
+            });
+        }
+    }
+
 
     private void displayInterstitialAdsSplash(String platform, final Context activity) {
         if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
@@ -1507,52 +1975,18 @@ public class AppManage {
             banner_container.setVisibility(View.GONE);
             return;
         }
-
-
-//        SharedPreferences.Editor nativeEditor = mysharedpreferences.edit();
-//        this.admob_b = ADMOB_B1;
-//        nativeEditor.putInt("AdsBannerSwipeCount", 2);
-//        nativeEditor.commit();
-
-//        count_banner++;
-
-
-//        int app_howShowAd = mysharedpreferences.getInt("app_howShowAdBanner", 0);
-//        String adPlatformSequence = mysharedpreferences.getString("app_adPlatformSequenceBanner", "");
-//        String alernateAdShow = mysharedpreferences.getString("app_alernateAdShowBanner", "");
-
+        setMinmumHeightForBanner(banner_container);
         String adPlatformSequence = AdsHelperClass.getbannerSequence();
 
         banner_sequence = new ArrayList<String>();
-        if (/*app_howShowAd == 0 && */!adPlatformSequence.isEmpty()) {
+        if (!adPlatformSequence.isEmpty()) {
             String adSequence[] = adPlatformSequence.split(",");
             banner_sequence.addAll(Arrays.asList(adSequence));
 
-        }/* else if (app_howShowAd == 1 && !alernateAdShow.isEmpty()) {
-            String alernateAd[] = alernateAdShow.split(",");
-
-            int index = 0;
-            for (int j = 0; j <= 10; j++) {
-                if (count_banner % alernateAd.length == j) {
-                    index = j;
-                    banner_sequence.add(alernateAd[index]);
-                }
-            }
-
-            String adSequence[] = adPlatformSequence.split(",");
-            for (int j = 0; j < adSequence.length; j++) {
-                if (banner_sequence.size() != 0) {
-                    if (!banner_sequence.get(0).equals(adSequence[j])) {
-                        banner_sequence.add(adSequence[j]);
-                    }
-                }
-            }
-        }*/
-
+        }
         if (banner_sequence.size() != 0) {
             displayBanner(banner_sequence.get(0), banner_container);
         }
-
     }
 
     public void showBannerInvisible(ViewGroup banner_container) {
@@ -1568,46 +2002,16 @@ public class AppManage {
             return;
         }
 
-
-//        SharedPreferences.Editor nativeEditor = mysharedpreferences.edit();
-//        this.admob_b = ADMOB_B1;
-//        nativeEditor.putInt("AdsBannerSwipeCount", 2);
-//        nativeEditor.commit();
-
-//        count_banner++;
-
-
-//        int app_howShowAd = mysharedpreferences.getInt("app_howShowAdBanner", 0);
-//        String adPlatformSequence = mysharedpreferences.getString("app_adPlatformSequenceBanner", "");
-//        String alernateAdShow = mysharedpreferences.getString("app_alernateAdShowBanner", "");
+        setMinmumHeightForBanner(banner_container);
 
         String adPlatformSequence = AdsHelperClass.getbannerSequence();
 
         banner_sequence = new ArrayList<String>();
-        if (/*app_howShowAd == 0 && */!adPlatformSequence.isEmpty()) {
+        if (!adPlatformSequence.isEmpty()) {
             String adSequence[] = adPlatformSequence.split(",");
             banner_sequence.addAll(Arrays.asList(adSequence));
 
-        }/* else if (app_howShowAd == 1 && !alernateAdShow.isEmpty()) {
-            String alernateAd[] = alernateAdShow.split(",");
-
-            int index = 0;
-            for (int j = 0; j <= 10; j++) {
-                if (count_banner % alernateAd.length == j) {
-                    index = j;
-                    banner_sequence.add(alernateAd[index]);
-                }
-            }
-
-            String adSequence[] = adPlatformSequence.split(",");
-            for (int j = 0; j < adSequence.length; j++) {
-                if (banner_sequence.size() != 0) {
-                    if (!banner_sequence.get(0).equals(adSequence[j])) {
-                        banner_sequence.add(adSequence[j]);
-                    }
-                }
-            }
-        }*/
+        }
 
         if (banner_sequence.size() != 0) {
             displayBannerInvisible(banner_sequence.get(0), banner_container);
@@ -1656,7 +2060,7 @@ public class AppManage {
         if (AdsHelperClass.getAdxBannerId().isEmpty()) {
             return;
         }
-
+        setMinmumHeightForBanner(banner_container);
         AdManagerAdView adXManagerAdView = new AdManagerAdView(activity);
         adXManagerAdView.setAdUnitId(AdsHelperClass.getAdxBannerId());
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -1681,7 +2085,11 @@ public class AppManage {
                 PrintLog(TAG, "onAdFailedToLoad: AdxBanner " + loadAdError.getMessage());
 
                 banner_container.removeAllViews();
-                banner_container.setVisibility(visibility);
+                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                    banner_container.setVisibility(View.INVISIBLE);
+                }else {
+                    banner_container.setVisibility(visibility);
+                }
 
                 nextBannerPlatform(banner_container);
             }
@@ -1722,9 +2130,11 @@ public class AppManage {
 
     private void showAdmobBanner(final ViewGroup banner_container, int visibility) {
         if (AdsHelperClass.getAdmobBannerId().isEmpty()) {
+            banner_container.setVisibility(View.INVISIBLE);
             return;
         }
 
+        setMinmumHeightForBanner(banner_container);
         final AdView mAdView = new AdView(activity);
         mAdView.setAdSize(AdSize.BANNER);
         mAdView.setAdUnitId(AdsHelperClass.getAdmobBannerId());
@@ -1743,7 +2153,11 @@ public class AppManage {
 
 
                 banner_container.removeAllViews();
-                banner_container.setVisibility(visibility);
+                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                    banner_container.setVisibility(View.INVISIBLE);
+                }else {
+                    banner_container.setVisibility(visibility);
+                }
                 nextBannerPlatform(banner_container);
             }
 
@@ -1779,6 +2193,7 @@ public class AppManage {
         if (AdsHelperClass.getFBBannerId().isEmpty()) {
             return;
         }
+        setMinmumHeightForBanner(banner_container);
 
         final com.facebook.ads.AdView mAdView = new com.facebook.ads.AdView(activity, AdsHelperClass.getFBBannerId(), com.facebook.ads.AdSize.BANNER_HEIGHT_50);
 
@@ -1788,7 +2203,12 @@ public class AppManage {
                 PrintLog(TAG, "onError:FBBanner " + adError.getErrorMessage());
 
                 banner_container.removeAllViews();
-                banner_container.setVisibility(visibility);
+                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                    banner_container.setVisibility(View.INVISIBLE);
+                }else {
+                    banner_container.setVisibility(visibility);
+                }
+
                 nextBannerPlatform(banner_container);
             }
 
@@ -1819,6 +2239,7 @@ public class AppManage {
         if (AdsHelperClass.getapplovinbanner().isEmpty()) {
             return;
         }
+        setMinmumHeightForBanner(banner_container);
 
         MaxAdView adView = new MaxAdView(AdsHelperClass.getapplovinbanner(), activity);
         adView.setListener(new MaxAdViewAdListener() {
@@ -1862,7 +2283,11 @@ public class AppManage {
             public void onAdLoadFailed(String adUnitId, MaxError error) {
                 PrintLog(TAG, "onAdLoadFailed:banner " + error.getMessage());
                 banner_container.removeAllViews();
-                banner_container.setVisibility(visibility);
+                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                    banner_container.setVisibility(View.INVISIBLE);
+                }else {
+                    banner_container.setVisibility(visibility);
+                }
                 nextBannerPlatform(banner_container);
 
 
@@ -1884,11 +2309,19 @@ public class AppManage {
 
     }
 
+    public void setMinmumHeightForBanner(ViewGroup banner_container){
+        if(AdsHelperClass.getIsBannerSpaceVisible() == 1){
+            int val = (int) MyApplicationAds.getContext().getResources().getDimension(R.dimen.margin_55);
+            banner_container.setMinimumHeight(val);
+            banner_container.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void showIronSourceBanner(ViewGroup banner_container, int visibility) {
         if (AdsHelperClass.getironappkey().isEmpty()) {
             return;
         }
-
+        setMinmumHeightForBanner(banner_container);
         ISBannerSize size = ISBannerSize.BANNER;
         mIronSourceBannerLayout = IronSource.createBanner(activity, size);
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
@@ -1910,7 +2343,11 @@ public class AppManage {
 
 
                 banner_container.removeAllViews();
-                banner_container.setVisibility(visibility);
+                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                    banner_container.setVisibility(View.INVISIBLE);
+                }else {
+                    banner_container.setVisibility(visibility);
+                }
                 nextBannerPlatform(banner_container);
 
             }

@@ -544,7 +544,19 @@ public static String getSplashAdsSequence() {
         SharedPreferencesClass.getInstance().setInt("first_ad_hide", i);
     }
 
+    public static int getIsPreloadSplashAd() {
+        return SharedPreferencesClass.getInstance().getInt("isPreloadSplashAd", 0);
+    }
+ public static int getIsBannerSpaceVisible() {
+        return SharedPreferencesClass.getInstance().getInt("isBannerSpaceVisible", 0);
+    }
 
+    public static void setIsPreloadSplashAd(int i) {
+        SharedPreferencesClass.getInstance().setInt("isPreloadSplashAd", i);
+    }
+ public static void setIsBannerSpaceVisible(int i) {
+        SharedPreferencesClass.getInstance().setInt("isBannerSpaceVisible", i);
+    }
 
 
     public static String getPip_sticker() {

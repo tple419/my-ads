@@ -37,8 +37,9 @@ public class AdsSplashActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                  manager = new AppOpenManagerSplash(activity);
-
-                if (AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1) {
+                if (AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1 && AdsHelperClass.getIsPreloadSplashAd() == 1 ) {
+                    myCallback1.onSuccess();
+                }else if (AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1) {
                             myCallback1.onSuccess();
                 } else if (AdsHelperClass.getSplash_ad_type() == 1 && AdsHelperClass.getIs_splash_on()==1 && AdsHelperClass.getappOpenAdStatus() == 1 && isNetworkAvailable()) {
                     //app open load

@@ -253,6 +253,6 @@
     <dimen name="_98sdp">98dp</dimen>
     <dimen name="_99sdp">99dp</dimen>
     <dimen name="_9sdp">9dp</dimen>
-
+    <dimen name="margin_55">55dp</dimen>
 
 </resources>
