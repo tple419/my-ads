@@ -187,6 +187,7 @@ public class AppManage {
         AdsHelperClass.setFirst_ad_hide(appData.getFirst_ad_hide());
         AdsHelperClass.setIsPreloadSplashAd(appData.getIsPreloadSplashAd());
         AdsHelperClass.setIsBannerSpaceVisible(appData.getIsBannerSpaceVisible());
+        AdsHelperClass.setIsOnLoadNative(appData.getIsOnLoadNative());
 
         /*New field*/
         AdsHelperClass.setS_api(appData.getS_api());
@@ -276,11 +277,9 @@ public class AppManage {
             //Network Connectivity Status
             IronSource.shouldTrackNetworkState(activity, true);
         }
-        if (AdsHelperClass.getAdShowStatus() == 1) {
-            AppManage.getInstance(activity).PreLoadNative();
+        if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNative() == 0) {
+                AppManage.getInstance(activity).PreLoadNative();
         }
-
-
     }
 
     private static boolean checkUpdate(int cversion) {
@@ -2617,9 +2616,23 @@ else {
 
     }
 
-    public void PreLoadShowNative(ViewGroup nativeAdContainer, boolean b) {
+    public void showNative(ViewGroup nativeAdContainer, boolean b, boolean isNativeInRecyclerview) {
 
+        if(isNativeInRecyclerview){
+            //preload
+            preLoadNative(nativeAdContainer,b);
+        }else {
+            if (AdsHelperClass.getIsOnLoadNative() == 1) {
+                onLoadshowNative(nativeAdContainer, b);
+            } else {
+                //preload
+                preLoadNative(nativeAdContainer,b);
+            }
+        }
 
+    }
+
+    public void preLoadNative(ViewGroup nativeAdContainer, boolean b){
         if (native_sequence.size() != 0) {
             if (preAdmobNative != null && native_sequence.get(0).equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
                 PrintLog(TAG, "PreLoadNative: ShowLoaded");
@@ -2677,7 +2690,6 @@ else {
                 PreLoadNative();
             }
         }
-
     }
 
 
@@ -2699,7 +2711,7 @@ else {
         }
     }
 
-    public void showNative(ViewGroup nativeAdContainer, boolean b) {
+    public void onLoadshowNative(ViewGroup nativeAdContainer, boolean b) {
 
         if (!hasActiveInternetConnection(activity)) {
             nativeAdContainer.setVisibility(View.GONE);
@@ -2716,33 +2728,12 @@ else {
 
 
         native_sequence = new ArrayList<String>();
-        if (/*app_howShowAd == 0 &&*/ !adPlatformSequence.isEmpty()) {
+        if (!adPlatformSequence.isEmpty()) {
             String adSequence[] = adPlatformSequence.split(",");
             for (int i = 0; i < adSequence.length; i++) {
                 native_sequence.add(adSequence[i]);
             }
-
-        } /*else if (app_howShowAd == 1 && !alernateAdShow.isEmpty()) {
-            String alernateAd[] = alernateAdShow.split(",");
-
-            int index = 0;
-            for (int j = 0; j <= 10; j++) {
-                if (count_native % alernateAd.length == j) {
-                    index = j;
-                    native_sequence.add(alernateAd[index]);
-                }
-            }
-
-            String adSequence[] = adPlatformSequence.split(",");
-            for (int j = 0; j < adSequence.length; j++) {
-                if (native_sequence.size() != 0) {
-                    if (!native_sequence.get(0).equals(adSequence[j])) {
-                        native_sequence.add(adSequence[j]);
-                    }
-                }
-            }
-        }*/
-
+        }
         if (native_sequence.size() != 0) {
             displayNative(native_sequence.get(0), nativeAdContainer, b);
         }
@@ -2750,7 +2741,6 @@ else {
     }
 
     public void displayNative(String platform, ViewGroup nativeAdContainer, boolean b) {
-
         if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
             showAdmobNative(nativeAdContainer, b);
         } else if (platform.equals(AdsHelperClass.ADX) && AdsHelperClass.getAdXAdStatus() == 1) {
@@ -2759,10 +2749,8 @@ else {
             showFBNative(nativeAdContainer, b);
         } else if (platform.equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
             showAppLovinNativeCustom(nativeAdContainer, b);
-
         } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             showIronNative(nativeAdContainer, b);
-
         }
     }
 
@@ -2778,8 +2766,6 @@ else {
                     public void onNativeAdLoaded(NativeAd nativeAd) {
                         // Show the ad.
                         new Inflate_ADS(activity).inflate_NATIV_ADMOB(nativeAd, nativeAdContainer, b);
-
-
                     }
                 })
                 .withAdListener(new AdListener() {
@@ -2872,7 +2858,6 @@ else {
                     public void onAdFailedToLoad(LoadAdError adError) {
                         // Handle the failure by logging, altering the UI, and so on.
                         PrintLog(TAG, "onAdFailedToLoad: Adx" + adError.getMessage());
-
                         nativeAdContainer.removeAllViews();
                         nativeAdContainer.setVisibility(View.GONE);
                         nextNativePlatform(nativeAdContainer, b);

@@ -558,6 +558,13 @@ public static String getSplashAdsSequence() {
         SharedPreferencesClass.getInstance().setInt("isBannerSpaceVisible", i);
     }
 
+    public static void setIsOnLoadNative(int i) {
+        SharedPreferencesClass.getInstance().setInt("isOnLoadNative", i);
+    }
+    public static int getIsOnLoadNative() {
+        return SharedPreferencesClass.getInstance().getInt("isOnLoadNative", 0);
+    }
+
 
     public static String getPip_sticker() {
         return SharedPreferencesClass.getInstance().getString("pip_sticker","");

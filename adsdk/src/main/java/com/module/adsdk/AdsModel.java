@@ -11,6 +11,10 @@ public class AdsModel {
     @SerializedName("isPreloadSplashAd")
     @Expose
     private int isPreloadSplashAd = 0;
+
+    @SerializedName("isOnLoadNative")
+    @Expose
+    private int isOnLoadNative = 0;
 @SerializedName("isBannerSpaceVisible")
     @Expose
     private int isBannerSpaceVisible = 0;
@@ -774,5 +778,13 @@ public class AdsModel {
 
     public void setIsPreloadSplashAd(int isPreloadSplashAd) {
         this.isPreloadSplashAd = isPreloadSplashAd;
+    }
+
+    public int getIsOnLoadNative() {
+        return isOnLoadNative;
+    }
+
+    public void setIsOnLoadNative(int isOnLoadNative) {
+        this.isOnLoadNative = isOnLoadNative;
     }
 }
