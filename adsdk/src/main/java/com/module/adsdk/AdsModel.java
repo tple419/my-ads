@@ -11,6 +11,17 @@ public class AdsModel {
     @SerializedName("isPreloadSplashAd")
     @Expose
     private int isPreloadSplashAd = 0;
+@SerializedName("interstitialFirstClick")
+    @Expose
+    private int interstitialFirstClick = 3;
+
+    public int getInterstitialFirstClick() {
+        return interstitialFirstClick;
+    }
+
+    public void setInterstitialFirstClick(int interstitialFirstClick) {
+        this.interstitialFirstClick = interstitialFirstClick;
+    }
 
     @SerializedName("isOnLoadNative")
     @Expose

@@ -20,6 +20,7 @@ public class AdsHelperClass {
     public static final String APPLOVIN = "applovin";
     public static boolean isShowingFullScreenAd = false;
     public static boolean isIsShowingFullScreenAdSplash = false;
+    public static String instanceCount = "instance_count";
 
     public static void showUpdateDialog(Activity activity, final String s) {
 
@@ -92,7 +93,6 @@ public class AdsHelperClass {
 
     }
 
-
     public static String getRemoteData() {
         return SharedPreferencesClass.getInstance().getString("REMOTE_CONFIG_DATA", "");
     }
@@ -100,7 +100,6 @@ public class AdsHelperClass {
     public static void setRemoteData(String i) {
         SharedPreferencesClass.getInstance().setString("REMOTE_CONFIG_DATA", i);
     }
-
 
     public static int getAdShowStatus() {
         return SharedPreferencesClass.getInstance().getInt("AdShowStatus", 0);
@@ -142,7 +141,6 @@ public class AdsHelperClass {
         SharedPreferencesClass.getInstance().setInt("AdmobFBStatus", i);
     }
 
-
     public static int getAdXAdStatus() {
         return SharedPreferencesClass.getInstance().getInt("AdXAdStatus", 0);
     }
@@ -159,7 +157,6 @@ public class AdsHelperClass {
         SharedPreferencesClass.getInstance().setInt("ApplovinAdStatus", i);
     }
 
-
     public static int getIronSourceAdStatus() {
         return SharedPreferencesClass.getInstance().getInt("IronSourceAdStatus", 0);
     }
@@ -175,7 +172,6 @@ public class AdsHelperClass {
     public static void setbannerAdStatus(int i) {
         SharedPreferencesClass.getInstance().setInt("bannerAdStatus", i);
     }
-
 
     public static int getnativeAdStatus() {
         return SharedPreferencesClass.getInstance().getInt("nativeAdStatus", 0);
@@ -200,7 +196,6 @@ public class AdsHelperClass {
     public static void setappOpenAdStatus(int i) {
         SharedPreferencesClass.getInstance().setInt("appOpenAdStatus", i);
     }
-
 
     public static int getappOpenCount() {
         return SharedPreferencesClass.getInstance().getInt("appOpenCount", 0);
@@ -250,7 +245,6 @@ public class AdsHelperClass {
         SharedPreferencesClass.getInstance().setInt("is_splash_on", i);
     }
 
-
     public static int getSplash_time() {
         return SharedPreferencesClass.getInstance().getInt("splash_time", 0);
     }
@@ -258,7 +252,6 @@ public class AdsHelperClass {
     public static void setSplash_time(int i) {
         SharedPreferencesClass.getInstance().setInt("splash_time", i);
     }
-
 
     public static String getAdmobBannerId() {
         return SharedPreferencesClass.getInstance().getString("AdmobBannerId", "");
@@ -316,7 +309,6 @@ public class AdsHelperClass {
         SharedPreferencesClass.getInstance().setString("AdxInterId", i);
     }
 
-
     public static String getFBBannerId() {
         return SharedPreferencesClass.getInstance().getString("FBBannerId", "");
     }
@@ -340,7 +332,6 @@ public class AdsHelperClass {
     public static void setFBInterId(String i) {
         SharedPreferencesClass.getInstance().setString("FBInterId", i);
     }
-
 
     public static String getAdxAppOpenId() {
         return SharedPreferencesClass.getInstance().getString("AdxAppOpenId", "");
@@ -390,7 +381,6 @@ public class AdsHelperClass {
         SharedPreferencesClass.getInstance().setString("ironappkey", i);
     }
 
-
     public static String getbannerSequence() {
         return SharedPreferencesClass.getInstance().getString("bannerSequence", "");
     }
@@ -414,7 +404,8 @@ public class AdsHelperClass {
     public static void setInterSequence(String i) {
         SharedPreferencesClass.getInstance().setString("InterSequence", i);
     }
-public static String getSplashAdsSequence() {
+
+    public static String getSplashAdsSequence() {
         return SharedPreferencesClass.getInstance().getString("SplashAdsSequence", "");
     }
 
@@ -518,7 +509,6 @@ public static String getSplashAdsSequence() {
         SharedPreferencesClass.getInstance().setInt("direct_review_enable", i);
     }
 
-
     public static int getAlbum_click_enabled() {
         return SharedPreferencesClass.getInstance().getInt("album_click_enabled", 0);
     }
@@ -535,7 +525,6 @@ public static String getSplashAdsSequence() {
         SharedPreferencesClass.getInstance().setInt("in_appreview", i);
     }
 
-
     public static int getFirst_ad_hide() {
         return SharedPreferencesClass.getInstance().getInt("first_ad_hide", 0);
     }
@@ -547,55 +536,61 @@ public static String getSplashAdsSequence() {
     public static int getIsPreloadSplashAd() {
         return SharedPreferencesClass.getInstance().getInt("isPreloadSplashAd", 0);
     }
- public static int getIsBannerSpaceVisible() {
-        return SharedPreferencesClass.getInstance().getInt("isBannerSpaceVisible", 0);
-    }
 
     public static void setIsPreloadSplashAd(int i) {
         SharedPreferencesClass.getInstance().setInt("isPreloadSplashAd", i);
     }
- public static void setIsBannerSpaceVisible(int i) {
+
+    public static int getIsBannerSpaceVisible() {
+        return SharedPreferencesClass.getInstance().getInt("isBannerSpaceVisible", 0);
+    }
+
+    public static void setIsBannerSpaceVisible(int i) {
         SharedPreferencesClass.getInstance().setInt("isBannerSpaceVisible", i);
+    }
+
+    public static int getIsOnLoadNative() {
+        return SharedPreferencesClass.getInstance().getInt("isOnLoadNative", 0);
     }
 
     public static void setIsOnLoadNative(int i) {
         SharedPreferencesClass.getInstance().setInt("isOnLoadNative", i);
     }
-    public static int getIsOnLoadNative() {
-        return SharedPreferencesClass.getInstance().getInt("isOnLoadNative", 0);
+
+    public static int getInterstitialFirstClick() {
+        return SharedPreferencesClass.getInstance().getInt("interstitialFirstClick", 3);
     }
 
+    public static void setInterstitialFirstClick(int i) {
+        SharedPreferencesClass.getInstance().setInt("interstitialFirstClick", i);
+    }
 
     public static String getPip_sticker() {
-        return SharedPreferencesClass.getInstance().getString("pip_sticker","");
+        return SharedPreferencesClass.getInstance().getString("pip_sticker", "");
     }
 
     public static void setPip_sticker(String i) {
         SharedPreferencesClass.getInstance().setString("pip_sticker", i);
     }
 
-
     public static String getBase() {
-        return SharedPreferencesClass.getInstance().getString("base","");
+        return SharedPreferencesClass.getInstance().getString("base", "");
     }
 
     public static void setBase(String i) {
         SharedPreferencesClass.getInstance().setString("base", i);
     }
 
-
-
     public static String getS_Zip() {
-        return SharedPreferencesClass.getInstance().getString("s_Zip","");
+        return SharedPreferencesClass.getInstance().getString("s_Zip", "");
     }
 
     public static void setS_Zip(String i) {
         SharedPreferencesClass.getInstance().setString("s_Zip", i);
     }
 
-
     public static String getS_thumb() {
-        return SharedPreferencesClass.getInstance().getString("s_thumb","");
+        return SharedPreferencesClass.getInstance().getString("s_thumb", "");
     }
 
     public static void setS_thumb(String i) {
@@ -603,7 +598,7 @@ public static String getSplashAdsSequence() {
     }
 
     public static String getS_sticker() {
-        return SharedPreferencesClass.getInstance().getString("s_sticker","");
+        return SharedPreferencesClass.getInstance().getString("s_sticker", "");
     }
 
     public static void setS_sticker(String i) {
@@ -611,7 +606,7 @@ public static String getSplashAdsSequence() {
     }
 
     public static String getS_frame_back() {
-        return SharedPreferencesClass.getInstance().getString("s_frame_back","");
+        return SharedPreferencesClass.getInstance().getString("s_frame_back", "");
     }
 
     public static void setS_frame_back(String i) {
@@ -619,15 +614,12 @@ public static String getSplashAdsSequence() {
     }
 
     public static String getS_api() {
-        return SharedPreferencesClass.getInstance().getString("s_api","");
+        return SharedPreferencesClass.getInstance().getString("s_api", "");
     }
 
     public static void setS_api(String i) {
         SharedPreferencesClass.getInstance().setString("s_api", i);
     }
-
-    public static String instanceCount = "instance_count";
-
 
     public static int getInstanceCount() {
         int type = SharedPreferencesClass.getInstance().getInt(instanceCount, 0);

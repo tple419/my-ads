@@ -88,6 +88,8 @@ public class AppManage {
     ArrayList<String> banner_sequence = new ArrayList<>();
     ArrayList<String> native_sequence = new ArrayList<>();
     ArrayList<String> interstitial_sequence = new ArrayList<>();
+    IronSourceBannerLayout mIronSourceBannerLayout;
+    IronSourceBannerLayout mIronSourceNativeLayout;
     private InterstitialAd mInterstitialAd;
     private InterstitialAd mInterstitialAdPre = null;
     private com.facebook.ads.InterstitialAd mFbInterstitialAd;
@@ -95,8 +97,6 @@ public class AppManage {
     private MaxInterstitialAd appLovin_interstitialAd;
     private MaxInterstitialAd appLovin_interstitialAdPre = null;
     private Dialog dialog;
-    IronSourceBannerLayout mIronSourceBannerLayout;
-    IronSourceBannerLayout mIronSourceNativeLayout;
     private boolean isIronNativePreloaded = false;
 
     private com.facebook.ads.NativeAd preFbNative;
@@ -188,6 +188,7 @@ public class AppManage {
         AdsHelperClass.setIsPreloadSplashAd(appData.getIsPreloadSplashAd());
         AdsHelperClass.setIsBannerSpaceVisible(appData.getIsBannerSpaceVisible());
         AdsHelperClass.setIsOnLoadNative(appData.getIsOnLoadNative());
+        AdsHelperClass.setInterstitialFirstClick(appData.getInterstitialFirstClick());
 
         /*New field*/
         AdsHelperClass.setS_api(appData.getS_api());
@@ -278,7 +279,7 @@ public class AppManage {
             IronSource.shouldTrackNetworkState(activity, true);
         }
         if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNative() == 0) {
-                AppManage.getInstance(activity).PreLoadNative();
+            AppManage.getInstance(activity).PreLoadNative();
         }
     }
 
@@ -415,9 +416,9 @@ public class AppManage {
 
 
 
-    public void showInterstitialAd(Context context, MyInterstitialCallback myCallback) {
+    /*public void showInterstitialAd(Context context, MyInterstitialCallback myCallback) {
         turnInterstitialAd(context, myCallback, 0);
-    }
+    }*/
 
     public void showInterstitialAd(Context context, MyInterstitialCallback myCallback, int how_many_clicks) {
         turnInterstitialAd(context, myCallback, how_many_clicks);
@@ -428,8 +429,9 @@ public class AppManage {
         turnInterstitialAdSplash(context, myCallback);
 
     }
+
     public void showPreLoadInterstitialAdSplash(Context context, MyInterstitialCallback myCallback) {
-        turnPreInterstitialAdSplash(context,myCallback);
+        turnPreInterstitialAdSplash(context, myCallback);
 
     }
 
@@ -504,7 +506,7 @@ public class AppManage {
         if (!adPlatformSequence.isEmpty()) {
             String adSequence[] = adPlatformSequence.split(",");
             interstitial_sequence.addAll(Arrays.asList(adSequence));
-        }else {
+        } else {
             if (intermyCallback != null) {
                 intermyCallback.callbackCall();
                 intermyCallback = null;
@@ -514,7 +516,7 @@ public class AppManage {
 
         if (interstitial_sequence.size() != 0) {
             loadPreInterstitialAdsSplash(interstitial_sequence.get(0), context);
-        }else {
+        } else {
             if (intermyCallback != null) {
                 intermyCallback.callbackCall();
                 intermyCallback = null;
@@ -1162,9 +1164,7 @@ public class AppManage {
 
     public void turnInterstitialAd(Context context, MyInterstitialCallback myCallback2, int how_many_clicks) {
         intermyCallback = myCallback2;
-
         count_click++;
-
         if (!hasActiveInternetConnection(context) || AdsHelperClass.getAdShowStatus() == 0 || AdsHelperClass.getinterAdStatus() == 0) {
             if (intermyCallback != null) {
                 intermyCallback.callbackCall();
@@ -1195,6 +1195,67 @@ public class AppManage {
             return;
         }
 
+        /*if(*//*(AdsHelperClass.getInterstitialFirstClick() == 0 ||  AdsHelperClass.getInterstitialFirstClick() == 1) &&*//* count_click <= AdsHelperClass.getInterstitialFirstClick()){
+            loadAndShowFullScreenAdsonFirstClick( context,how_many_clicks);
+        }else {
+            loadAndShowFullScreenAds( context, how_many_clicks);
+        }*/
+        if ((AdsHelperClass.getinterstitialCount() > AdsHelperClass.getInterstitialFirstClick() && count_click == AdsHelperClass.getInterstitialFirstClick())
+                || (count_click > 0 && count_click % AdsHelperClass.getinterstitialCount() == 0)) {
+            loadAndShowFullScreenAds(context, how_many_clicks);
+        } else {
+            if (intermyCallback != null) {
+                intermyCallback.callbackCall();
+                intermyCallback = null;
+            }
+        }
+
+
+    }
+
+    private void loadAndShowFullScreenAdsonFirstClick(Context context, int how_many_clicks) {
+        //preload things to show
+        if (mInterstitialAdPre != null && AdsHelperClass.getAdmobAdStatus() == 1 && count_click == AdsHelperClass.getInterstitialFirstClick()) {
+            displayPreInterstitialAd(AdsHelperClass.ADMOB, activity);
+        } else if (mAdManagerInterstitialAdPre != null && AdsHelperClass.getAdXAdStatus() == 1 && count_click == AdsHelperClass.getInterstitialFirstClick()) {
+            displayPreInterstitialAd(AdsHelperClass.ADX, activity);
+        } else if (mFbInterstitialAdPre != null && AdsHelperClass.getFBAdStatus() == 1 && count_click == AdsHelperClass.getInterstitialFirstClick()) {
+            displayPreInterstitialAd(AdsHelperClass.FACEBOOK, activity);
+        } else if (appLovin_interstitialAdPre != null && AdsHelperClass.getApplovinAdStatus() == 1 && count_click == AdsHelperClass.getInterstitialFirstClick()) {
+            displayPreInterstitialAd(AdsHelperClass.APPLOVIN, activity);
+        } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+            displayPreInterstitialAd(AdsHelperClass.IRON, activity);
+        }*/ else {
+            if (count_click == AdsHelperClass.getInterstitialFirstClick()) {
+
+                String adPlatformSequence = AdsHelperClass.getInterSequence();
+
+
+                interstitial_sequence = new ArrayList<String>();
+                if (/*app_howShowAd == 0 && */!adPlatformSequence.isEmpty()) {
+                    String adSequence[] = adPlatformSequence.split(",");
+
+                    interstitial_sequence.addAll(Arrays.asList(adSequence));
+
+                }
+
+
+                if (interstitial_sequence.size() != 0) {
+                    displayInterstitialAds(interstitial_sequence.get(0), context);
+                } else {
+                    interstitialCallBack();
+                }
+            } else {
+                if (intermyCallback != null) {
+                    intermyCallback.callbackCall();
+                    intermyCallback = null;
+                }
+            }
+        }
+    }
+
+
+    private void loadAndShowFullScreenAds(Context context, int how_many_clicks) {
         //preload things to show
         if (mInterstitialAdPre != null && AdsHelperClass.getAdmobAdStatus() == 1) {
             displayPreInterstitialAd(AdsHelperClass.ADMOB, activity);
@@ -1206,22 +1267,9 @@ public class AppManage {
             displayPreInterstitialAd(AdsHelperClass.APPLOVIN, activity);
         } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             displayPreInterstitialAd(AdsHelperClass.IRON, activity);
-        }*/
-
-else {
-
-            if (how_many_clicks != 0) {
-                if (count_click % how_many_clicks != 0) {
-                    if (intermyCallback != null) {
-                        intermyCallback.callbackCall();
-                        intermyCallback = null;
-                    }
-                    return;
-                }
-            }
+        }*/ else {
 
             String adPlatformSequence = AdsHelperClass.getInterSequence();
-
 
             interstitial_sequence = new ArrayList<String>();
             if (/*app_howShowAd == 0 && */!adPlatformSequence.isEmpty()) {
@@ -1237,6 +1285,8 @@ else {
             } else {
                 interstitialCallBack();
             }
+
+
         }
 
     }
@@ -1390,7 +1440,7 @@ else {
             }
             showDialog(activity);
 
-            PrintLog(TAG, "Applovin Load ===> id: "+AdsHelperClass.getapplovininter() );
+            PrintLog(TAG, "Applovin Load ===> id: " + AdsHelperClass.getapplovininter());
 
             appLovin_interstitialAd = new MaxInterstitialAd(AdsHelperClass.getapplovininter(), (Activity) activity);
             appLovin_interstitialAd.setListener(new MaxAdListener() {
@@ -1509,6 +1559,7 @@ else {
             interstitialCallBack();
         }
     }
+
     private void loadPreInterstitialAdsSplash(String platform, final Context activity) {
         if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
             if (TextUtils.isEmpty(AdsHelperClass.getAdmobInterId())) {
@@ -1654,7 +1705,6 @@ else {
                 }
             });
             appLovin_interstitialAd.loadAd();
-
 
 
         } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
@@ -1887,7 +1937,6 @@ else {
             appLovin_interstitialAd.loadAd();
 
 
-
         } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             if (TextUtils.isEmpty(AdsHelperClass.getironappkey())) {
                 return;
@@ -2084,9 +2133,9 @@ else {
                 PrintLog(TAG, "onAdFailedToLoad: AdxBanner " + loadAdError.getMessage());
 
                 banner_container.removeAllViews();
-                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
                     banner_container.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     banner_container.setVisibility(visibility);
                 }
 
@@ -2152,9 +2201,9 @@ else {
 
 
                 banner_container.removeAllViews();
-                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
                     banner_container.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     banner_container.setVisibility(visibility);
                 }
                 nextBannerPlatform(banner_container);
@@ -2202,9 +2251,9 @@ else {
                 PrintLog(TAG, "onError:FBBanner " + adError.getErrorMessage());
 
                 banner_container.removeAllViews();
-                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
                     banner_container.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     banner_container.setVisibility(visibility);
                 }
 
@@ -2282,9 +2331,9 @@ else {
             public void onAdLoadFailed(String adUnitId, MaxError error) {
                 PrintLog(TAG, "onAdLoadFailed:banner " + error.getMessage());
                 banner_container.removeAllViews();
-                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
                     banner_container.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     banner_container.setVisibility(visibility);
                 }
                 nextBannerPlatform(banner_container);
@@ -2308,8 +2357,8 @@ else {
 
     }
 
-    public void setMinmumHeightForBanner(ViewGroup banner_container){
-        if(AdsHelperClass.getIsBannerSpaceVisible() == 1){
+    public void setMinmumHeightForBanner(ViewGroup banner_container) {
+        if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
             int val = (int) MyApplicationAds.getContext().getResources().getDimension(R.dimen.margin_55);
             banner_container.setMinimumHeight(val);
             banner_container.setVisibility(View.VISIBLE);
@@ -2342,9 +2391,9 @@ else {
 
 
                 banner_container.removeAllViews();
-                if(AdsHelperClass.getIsBannerSpaceVisible()== 1){
+                if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
                     banner_container.setVisibility(View.INVISIBLE);
-                }else {
+                } else {
                     banner_container.setVisibility(visibility);
                 }
                 nextBannerPlatform(banner_container);
@@ -2618,21 +2667,21 @@ else {
 
     public void showNative(ViewGroup nativeAdContainer, boolean b, boolean isNativeInRecyclerview) {
 
-        if(isNativeInRecyclerview){
+        if (isNativeInRecyclerview) {
             //preload
-            preLoadNative(nativeAdContainer,b);
-        }else {
+            preLoadNative(nativeAdContainer, b);
+        } else {
             if (AdsHelperClass.getIsOnLoadNative() == 1) {
                 onLoadshowNative(nativeAdContainer, b);
             } else {
                 //preload
-                preLoadNative(nativeAdContainer,b);
+                preLoadNative(nativeAdContainer, b);
             }
         }
 
     }
 
-    public void preLoadNative(ViewGroup nativeAdContainer, boolean b){
+    public void preLoadNative(ViewGroup nativeAdContainer, boolean b) {
         if (native_sequence.size() != 0) {
             if (preAdmobNative != null && native_sequence.get(0).equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
                 PrintLog(TAG, "PreLoadNative: ShowLoaded");
