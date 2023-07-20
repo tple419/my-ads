@@ -17,7 +17,7 @@
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-6583345262181935~8002529432" />
+            android:value="ca-app-pub-3940256099942544~3347511713" />
 
         <meta-data
             android:name="com.google.android.gms.ads.flag.NATIVE_AD_DEBUGGER_ENABLED"
@@ -25,9 +25,9 @@
         <meta-data
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
-        <meta-data
-            android:name="applovin.sdk.key"
-            android:value="2JKuAsFRUfrhRLJ8JpB5m8Edh1zB598vuA5IsX-aqCXBHpkP8DziAOCDazGw8pgFChCCSy1MTofcTx_RZeiPew" />
+
+        <meta-data android:name="applovin.sdk.key"
+            android:value="YOUR_SDK_KEY_HERE"/>
     </application>
 
 </manifest>
