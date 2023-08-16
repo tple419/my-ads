@@ -631,4 +631,21 @@ public class AdsHelperClass {
     }
 
 
+    public static int getIsGDPROn() {
+        return SharedPreferencesClass.getInstance().getInt("isGDPROn", 0);
+    }
+
+    public static void setIsGDPROn(int i) {
+        SharedPreferencesClass.getInstance().setInt("isGDPROn", i);
+    }
+
+    public static int getIsGDPROnFailed() {
+        return SharedPreferencesClass.getInstance().getInt("isGDPROnFailed", 0);
+    }
+
+    public static void setIsGDPROnFailed(int i) {
+        SharedPreferencesClass.getInstance().setInt("isGDPROnFailed", i);
+    }
+
+
 }

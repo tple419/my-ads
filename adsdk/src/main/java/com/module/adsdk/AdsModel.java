@@ -798,4 +798,30 @@ public class AdsModel {
     public void setIsOnLoadNative(int isOnLoadNative) {
         this.isOnLoadNative = isOnLoadNative;
     }
+
+
+    @SerializedName("isGDPROn")
+    @Expose
+    private int isGDPROn = 0;
+
+
+    @SerializedName("isGDPROnFailed")
+    @Expose
+    private int isGDPROnFailed = 0;
+
+    public int getIsGDPROn() {
+        return isGDPROn;
+    }
+
+    public void setIsGDPROn(int isGDPROn) {
+        this.isGDPROn = isGDPROn;
+    }
+
+    public int getIsGDPROnFailed() {
+        return isGDPROnFailed;
+    }
+
+    public void setIsGDPROnFailed(int isGDPROnFailed) {
+        this.isGDPROnFailed = isGDPROnFailed;
+    }
 }

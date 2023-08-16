@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -61,6 +62,11 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.ump.ConsentDebugSettings;
+import com.google.android.ump.ConsentForm;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.UserMessagingPlatform;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ironsource.mediationsdk.ISBannerSize;
@@ -73,6 +79,7 @@ import com.ironsource.mediationsdk.sdk.InterstitialListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class AppManage {
@@ -204,29 +211,14 @@ public class AppManage {
         AdsHelperClass.setBanner_display_pager(appData.getBanner_display_pager());
         AdsHelperClass.setBanner_display_list(appData.getBanner_display_list());
         AdsHelperClass.setNative_display_list(appData.getNative_display_list());
+        AdsHelperClass.setIsGDPROn(appData.getIsGDPROn());
+        AdsHelperClass.setIsGDPROnFailed(appData.getIsGDPROnFailed());
 
     }
 
-    private static void initAd(List<String> testDeviceIds) {
-
-        if (AdsHelperClass.getAdShowStatus() == 0) {
-            return;
-        }
-
-        if (AdsHelperClass.getAdmobAdStatus() == 1 || AdsHelperClass.getAdXAdStatus() == 1) {
-            MobileAds.initialize(activity, new OnInitializationCompleteListener() {
-                @Override
-                public void onInitializationComplete(InitializationStatus initializationStatus) {
-                    RequestConfiguration configuration =
-                            new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
-                    MobileAds.setRequestConfiguration(configuration);
-                    PrintLog(TAG, "onInitializationComplete: admob");
-
-                }
-            });
+    private  void initAd(getAdsDataListner listner, List<String> testDeviceIds) {
 
 
-        }
 
         if (AdsHelperClass.getFBAdStatus() == 1) {
 
@@ -278,10 +270,102 @@ public class AppManage {
             //Network Connectivity Status
             IronSource.shouldTrackNetworkState(activity, true);
         }
-        if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNative() == 0) {
-            AppManage.getInstance(activity).PreLoadNative();
+
+        if (AdsHelperClass.getAdmobAdStatus() == 1 || AdsHelperClass.getAdXAdStatus() == 1) {
+            if(AdsHelperClass.getIsGDPROn() == 1) {
+//                Toast.makeText(activity,  "getIsGDPROn on", Toast.LENGTH_SHORT).show();
+            /*ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(activity)
+                    .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+                    .addTestDeviceHashedId("1E955FCEE279A309514E1F96C8C0239A")
+                    .addTestDeviceHashedId("A6CDEA35542F3A2E16B2F1A185A44048")
+                    .build();*/
+
+                ConsentRequestParameters params = new ConsentRequestParameters
+                        .Builder()
+                        .setTagForUnderAgeOfConsent(false)
+                        .build();
+// .setTagForUnderAgeOfConsent(false)
+                consentInformation = UserMessagingPlatform.getConsentInformation(activity);
+                consentInformation.requestConsentInfoUpdate(
+                        activity,
+                        params,
+                        (ConsentInformation.OnConsentInfoUpdateSuccessListener) () -> {
+                            // TODO: Load and show the consent form.
+                            UserMessagingPlatform.loadAndShowConsentFormIfRequired(
+                                    activity,
+                                    (ConsentForm.OnConsentFormDismissedListener) loadAndShowError -> {
+                                        if (loadAndShowError != null) {
+                                            // Consent gathering failed.
+                                            Log.w(TAG, String.format("%s: %s",
+                                                    loadAndShowError.getErrorCode(),
+                                                    loadAndShowError.getMessage()));
+                                            if(AdsHelperClass.getIsGDPROnFailed() == 1){
+                                                AdmobSdk(listner,testDeviceIds);
+                                            }
+                                        }
+
+                                        // Consent has been gathered.
+                                        if (consentInformation.canRequestAds()) {
+                                            initializeMobileAdsSdk(listner, testDeviceIds);
+                                        }
+                                    }
+                            );
+
+                        },
+                        (ConsentInformation.OnConsentInfoUpdateFailureListener) requestConsentError -> {
+                            // Consent gathering failed.
+                            Log.w(TAG, String.format("%s: %s",
+                                    requestConsentError.getErrorCode(),
+                                    requestConsentError.getMessage()));
+                            if(AdsHelperClass.getIsGDPROnFailed() == 1){
+                                AdmobSdk(listner,testDeviceIds);
+                            }
+//
+                        });
+                // Check if you can initialize the Google Mobile Ads SDK in parallel
+                // while checking for new consent information. Consent obtained in
+                // the previous session can be used to request ads.
+                if (consentInformation.canRequestAds()) {
+                    initializeMobileAdsSdk(listner, testDeviceIds);
+                }
+            }else {
+//                Toast.makeText(activity,  "getIsGDPROn off", Toast.LENGTH_SHORT).show();
+                AdmobSdk(listner,testDeviceIds);
+            }
+        }else {
+
+            listner.onSuccess();
         }
+
     }
+    public  ConsentInformation consentInformation;
+    private  void initializeMobileAdsSdk(getAdsDataListner listner,List<String> testDeviceIds) {
+        if (isMobileAdsInitializeCalled.getAndSet(true)) {
+            return;
+        }
+
+        AdmobSdk(listner,testDeviceIds);
+    }
+
+    private  void AdmobSdk(getAdsDataListner listner,List<String> testDeviceIds) {
+//        Toast.makeText(activity,  "Request an ad.", Toast.LENGTH_SHORT).show();
+
+        MobileAds.initialize(activity, new OnInitializationCompleteListener() {
+            @Override
+            public void onInitializationComplete(InitializationStatus initializationStatus) {
+                RequestConfiguration configuration =
+                        new RequestConfiguration.Builder().setTestDeviceIds(testDeviceIds).build();
+                MobileAds.setRequestConfiguration(configuration);
+//                PrintLog(TAG, "onInitializationComplete: admob");
+
+            }
+        });
+
+        listner.onSuccess();
+
+    }
+
+    private static final AtomicBoolean isMobileAdsInitializeCalled = new AtomicBoolean(false);
 
     private static boolean checkUpdate(int cversion) {
         if (AdsHelperClass.getapp_updateAppDialogStatus() == 1) {
@@ -344,8 +428,11 @@ public class AppManage {
             } else if (AdsHelperClass.getapp_updateAppDialogStatus() == 1 && checkUpdate(cversion)) {
                 listner.onUpdate("https://play.google.com/store/apps/details?id=" + activity.getPackageName());
             } else {
-                listner.onSuccess();
-                initAd(testDeviceIds);
+                if (AdsHelperClass.getAdShowStatus() == 0) {
+                    listner.onSuccess();
+                }else {
+                    initAd(listner,testDeviceIds);
+                }
             }
         }
     }

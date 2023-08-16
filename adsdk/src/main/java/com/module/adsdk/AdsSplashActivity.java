@@ -36,12 +36,15 @@ public class AdsSplashActivity extends AppCompatActivity {
         AppManage.getInstance(activity).getResponseFromPref(new getAdsDataListner() {
             @Override
             public void onSuccess() {
+                if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNative() == 0) {
+                    AppManage.getInstance(activity).PreLoadNative();
+                }
                  manager = new AppOpenManagerSplash(activity);
-                if (AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1 && AdsHelperClass.getIsPreloadSplashAd() == 1 ) {
+                if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1 && AdsHelperClass.getIsPreloadSplashAd() == 1 ) {
                     myCallback1.onSuccess();
-                }else if (AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1) {
+                }else if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1) {
                             myCallback1.onSuccess();
-                } else if (AdsHelperClass.getSplash_ad_type() == 1 && AdsHelperClass.getIs_splash_on()==1 && AdsHelperClass.getappOpenAdStatus() == 1 && isNetworkAvailable()) {
+                } else if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getSplash_ad_type() == 1 && AdsHelperClass.getIs_splash_on()==1 && AdsHelperClass.getappOpenAdStatus() == 1 && isNetworkAvailable()) {
                     //app open load
                      AdsHelperClass.isIsShowingFullScreenAdSplash=true;
                     manager.showAdIfAvailableSplash(new AppOpenManagerSplash.splshADlistner() {
@@ -89,6 +92,8 @@ public class AdsSplashActivity extends AppCompatActivity {
             @Override
             public void onReload() {
             }
+
+
 
 
         },testDeviceIds, cversion);
