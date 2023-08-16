@@ -333,7 +333,6 @@ public class AppManage {
                 AdmobSdk(listner,testDeviceIds);
             }
         }else {
-
             listner.onSuccess();
         }
 
