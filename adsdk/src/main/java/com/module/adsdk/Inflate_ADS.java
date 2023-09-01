@@ -28,23 +28,41 @@ public class Inflate_ADS {
     }
 
 
-    public void inflate_NATIV_ADMOB(com.google.android.gms.ads.nativead.NativeAd nativeAd, ViewGroup cardView, boolean b) {
+    public void inflate_NATIV_ADMOB(com.google.android.gms.ads.nativead.NativeAd nativeAd, ViewGroup cardView, boolean b , boolean isNativeSmall) {
 
         cardView.setVisibility(View.VISIBLE);
         LayoutInflater inflater = LayoutInflater.from(activity);
-        NativeAdView adView =  (NativeAdView) inflater.inflate(R.layout.ads_native_admob_adview, null);
+        NativeAdView adView = null;
+        if(isNativeSmall){
+            adView =  (NativeAdView) inflater.inflate(R.layout.ads_native_admob_adview_small, null);
+        }else {
+            adView =  (NativeAdView) inflater.inflate(R.layout.ads_native_admob_adview, null);
+        }
         cardView.removeAllViews();
 
-        if (b) {
-            final float scale = activity.getResources().getDisplayMetrics().density;
-            int pixels = (int) (250 * scale + 0.5f);
+        if(isNativeSmall){
+            if (b) {
+                final float scale = activity.getResources().getDisplayMetrics().density;
+                int pixels = (int) (150 * scale + 0.5f);
 
-            cardView.getLayoutParams().height = pixels;
-            cardView.requestLayout();
+                cardView.getLayoutParams().height = pixels;
+                cardView.requestLayout();
+            }
+        }else {
+            if (b) {
+                final float scale = activity.getResources().getDisplayMetrics().density;
+                int pixels = (int) (250 * scale + 0.5f);
+
+                cardView.getLayoutParams().height = pixels;
+                cardView.requestLayout();
+            }
         }
         cardView.addView(adView);
 
-        adView.setMediaView((com.google.android.gms.ads.nativead.MediaView) adView.findViewById(R.id.ad_media));
+        if(!isNativeSmall){
+            adView.setMediaView((com.google.android.gms.ads.nativead.MediaView) adView.findViewById(R.id.ad_media));
+        }
+
         adView.setHeadlineView(adView.findViewById(R.id.ad_headline));
         adView.setBodyView(adView.findViewById(R.id.ad_body));
         adView.setCallToActionView(adView.findViewById(R.id.ad_call_to_action));
@@ -55,7 +73,9 @@ public class Inflate_ADS {
         adView.setAdvertiserView(adView.findViewById(R.id.ad_advertiser));
 
         ((TextView) adView.getHeadlineView()).setText(nativeAd.getHeadline());
-        adView.getMediaView().setMediaContent(nativeAd.getMediaContent());
+        if(!isNativeSmall) {
+            adView.getMediaView().setMediaContent(nativeAd.getMediaContent());
+        }
 
         if (nativeAd.getBody() == null) {
             adView.getBodyView().setVisibility(View.INVISIBLE);
@@ -114,34 +134,50 @@ public class Inflate_ADS {
         adView.getPriceView().setVisibility(View.GONE);
 
         adView.setNativeAd(nativeAd);
-        VideoController vc = Objects.requireNonNull(nativeAd.getMediaContent()).getVideoController();
+        if(!isNativeSmall) {
+            VideoController vc = Objects.requireNonNull(nativeAd.getMediaContent()).getVideoController();
 
-        if (vc.hasVideoContent()) {
-            vc.setVideoLifecycleCallbacks(new VideoController.VideoLifecycleCallbacks() {
-                @Override
-                public void onVideoEnd() {
-                    super.onVideoEnd();
-                }
-            });
+            if (vc.hasVideoContent()) {
+                vc.setVideoLifecycleCallbacks(new VideoController.VideoLifecycleCallbacks() {
+                    @Override
+                    public void onVideoEnd() {
+                        super.onVideoEnd();
+                    }
+                });
+            }
         }
     }
 
 
 
 
-    public void inflate_NATIV_FB(NativeAd nativeAd, ViewGroup cardView, boolean b) {
+    public void inflate_NATIV_FB(NativeAd nativeAd, ViewGroup cardView, boolean b, boolean isNativeSmall) {
         nativeAd.unregisterView();
         cardView.setVisibility(View.VISIBLE);
         LayoutInflater inflater = LayoutInflater.from(activity);
-        com.facebook.ads.NativeAdLayout adView =  (com.facebook.ads.NativeAdLayout) inflater.inflate(R.layout.ads_native_fb_adview, null);
+        com.facebook.ads.NativeAdLayout adView = null;
+        if(isNativeSmall){
+            adView = (com.facebook.ads.NativeAdLayout) inflater.inflate(R.layout.ads_native_fb_adview_small, null);
+        }else {
+             adView = (com.facebook.ads.NativeAdLayout) inflater.inflate(R.layout.ads_native_fb_adview, null);
+        }
         cardView.removeAllViews();
+        if(isNativeSmall){
+            if (b) {
+                final float scale = activity.getResources().getDisplayMetrics().density;
+                int pixels = (int) (150 * scale + 0.5f);
 
-        if (b) {
-            final float scale = activity.getResources().getDisplayMetrics().density;
-            int pixels = (int) (250 * scale + 0.5f);
+                cardView.getLayoutParams().height = pixels;
+                cardView.requestLayout();
+            }
+        }else {
+            if (b) {
+                final float scale = activity.getResources().getDisplayMetrics().density;
+                int pixels = (int) (250 * scale + 0.5f);
 
-            cardView.getLayoutParams().height = pixels;
-            cardView.requestLayout();
+                cardView.getLayoutParams().height = pixels;
+                cardView.requestLayout();
+            }
         }
         cardView.addView(adView);
 
@@ -160,7 +196,10 @@ public class Inflate_ADS {
         // Create native UI using the ad metadata.
         MediaView nativeAdIcon = adView.findViewById(R.id.native_ad_icon);
         TextView nativeAdTitle = adView.findViewById(R.id.native_ad_title);
-        MediaView nativeAdMedia = adView.findViewById(R.id.native_ad_media);
+        MediaView nativeAdMedia = null;
+        if(!isNativeSmall) {
+            nativeAdMedia = adView.findViewById(R.id.native_ad_media);
+        }
         TextView nativeAdSocialContext = adView.findViewById(R.id.native_ad_social_context);
         TextView nativeAdBody = adView.findViewById(R.id.native_ad_body);
         TextView sponsoredLabel = adView.findViewById(R.id.native_ad_sponsored_label);
@@ -178,12 +217,20 @@ public class Inflate_ADS {
         List<View> clickableViews = new ArrayList<>();
         clickableViews.add(nativeAdTitle);
         clickableViews.add(nativeAdIcon);
-        clickableViews.add(nativeAdMedia);
+        if(!isNativeSmall) {
+            clickableViews.add(nativeAdMedia);
+        }
         clickableViews.add(nativeAdCallToAction);
 
         // Register the Title and CTA button to listen for clicks.
-        nativeAd.registerViewForInteraction(
-                adView, nativeAdMedia, nativeAdIcon, clickableViews);
+        if(isNativeSmall) {
+            nativeAd.registerViewForInteraction(
+                    adView, nativeAdIcon, clickableViews);
+        }else {
+            nativeAd.registerViewForInteraction(
+                    adView, nativeAdMedia, nativeAdIcon, clickableViews);
+        }
+
     }
 
 

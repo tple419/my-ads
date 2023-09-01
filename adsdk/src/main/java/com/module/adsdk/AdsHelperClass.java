@@ -264,9 +264,15 @@ public class AdsHelperClass {
     public static String getAdmobNativeId() {
         return SharedPreferencesClass.getInstance().getString("AdmobNativeId", "");
     }
+public static String getAdmobSmallNativeId() {
+        return SharedPreferencesClass.getInstance().getString("AdmobSmallNativeId", "");
+    }
 
     public static void setAdmobNativeId(String i) {
         SharedPreferencesClass.getInstance().setString("AdmobNativeId", i);
+    }
+public static void setAdmobSmallNativeId(String i) {
+        SharedPreferencesClass.getInstance().setString("AdmobSmallNativeId", i);
     }
 
     public static String getAdmobInterId() {
@@ -301,6 +307,14 @@ public class AdsHelperClass {
         SharedPreferencesClass.getInstance().setString("AdxNativeId", i);
     }
 
+    public static String getAdxSmallNativeId() {
+        return SharedPreferencesClass.getInstance().getString("AdxSmallNativeId", "");
+    }
+
+    public static void setAdxSmallNativeId(String i) {
+        SharedPreferencesClass.getInstance().setString("AdxSmallNativeId", i);
+    }
+
     public static String getAdxInterId() {
         return SharedPreferencesClass.getInstance().getString("AdxInterId", "");
     }
@@ -323,6 +337,13 @@ public class AdsHelperClass {
 
     public static void setFBNativeId(String i) {
         SharedPreferencesClass.getInstance().setString("FBNativeId", i);
+    }
+public static String getFBSmallNativeId() {
+        return SharedPreferencesClass.getInstance().getString("FBSmallNative", "");
+    }
+
+    public static void setFBSmallNativeId(String i) {
+        SharedPreferencesClass.getInstance().setString("FBSmallNative", i);
     }
 
     public static String getFBInterId() {
@@ -555,6 +576,13 @@ public class AdsHelperClass {
 
     public static void setIsOnLoadNative(int i) {
         SharedPreferencesClass.getInstance().setInt("isOnLoadNative", i);
+    }
+public static int getIsOnLoadNativeSmall() {
+        return SharedPreferencesClass.getInstance().getInt("isOnLoadNativeSmall", 0);
+    }
+
+    public static void setIsOnLoadNativeSmall(int i) {
+        SharedPreferencesClass.getInstance().setInt("isOnLoadNativeSmall", i);
     }
 
     public static int getInterstitialFirstClick() {

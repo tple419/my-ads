@@ -37,8 +37,11 @@ public class AdsSplashActivity extends AppCompatActivity {
             @Override
             public void onSuccess() {
                 if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNative() == 0) {
-                    AppManage.getInstance(activity).PreLoadNative();
+                    AppManage.getInstance(activity).PreLoadNative(false);
                 }
+               /* if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNativeSmall() == 0) {
+                    AppManage.getInstance(activity).PreLoadNative(true);
+                }*/
                  manager = new AppOpenManagerSplash(activity);
                 if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1 && AdsHelperClass.getIsPreloadSplashAd() == 1 ) {
                     myCallback1.onSuccess();
