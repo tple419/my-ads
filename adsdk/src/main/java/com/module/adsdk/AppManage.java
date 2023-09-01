@@ -3206,11 +3206,11 @@ public class AppManage {
     private void showAdmobNative(final ViewGroup nativeAdContainer, boolean b,boolean isNativeSmall) {
         String nativeID = "";
 
-        if(isNativeSmall){
+        /*if(isNativeSmall){
             nativeID = AdsHelperClass.getAdmobSmallNativeId();
-        }else {
+        }else {*/
             nativeID = AdsHelperClass.getAdmobNativeId();
-        }
+//        }
         if (nativeID.isEmpty()) {
             nativeAdContainer.setVisibility(View.GONE);
             return;
@@ -3250,11 +3250,11 @@ public class AppManage {
 
         String nativeID = "";
 
-        if(isNativeSmall){
+       /* if(isNativeSmall){
             nativeID = AdsHelperClass.getFBSmallNativeId();
-        }else {
+        }else {*/
             nativeID = AdsHelperClass.getFBNativeId();
-        }
+//        }
 
 
         if (nativeID.isEmpty()) {
@@ -3306,11 +3306,11 @@ public class AppManage {
 
         String nativeID = "";
 
-        if(isNativeSmall){
+        /*if(isNativeSmall){
             nativeID = AdsHelperClass.getAdxSmallNativeId();
-        }else {
+        }else {*/
             nativeID = AdsHelperClass.getAdxNativeId();
-        }
+//        }
 
         if (nativeID.isEmpty()) {
             nativeAdContainer.setVisibility(View.GONE);
