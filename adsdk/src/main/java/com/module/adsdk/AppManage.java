@@ -85,6 +85,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AppManage {
     private static final String TAG = "AppManage";
     public static int count_click = -1;
+    public static int showTime = 0;
     public static SharedPreferences mysharedpreferences;
     public static MaxAd nativeAd2;
     static Activity activity;
@@ -162,6 +163,7 @@ public class AppManage {
         AdsHelperClass.setappOpenCount(appData.getAppOpen_count());
         AdsHelperClass.setFullScreenLimitCount(appData.getFullScreen_count());
         AdsHelperClass.setinterstitialCount(appData.getInterstitial_count());
+        AdsHelperClass.setInterstitialCountMultiplier(appData.getInterstitialCountMultiplier());
         AdsHelperClass.setExitAdEnable(appData.getExitAdEnable());
         AdsHelperClass.setIs_splash_on(appData.getIs_splash_on());
         AdsHelperClass.setSplash_ad_type(appData.getSplash_ad_type());
@@ -450,7 +452,7 @@ public class AppManage {
     }
 
 
-    private void loadNextInterstitialPlatform() {
+    private void loadNextInterstitialPlatform(boolean isNeedResetCount) {
         hideDialog();
 
         if (interstitial_sequence.size() != 0) {
@@ -458,7 +460,7 @@ public class AppManage {
 
             if (interstitial_sequence.size() != 0 && interstitial_sequence.get(0) != null) {
                 PrintLog(TAG, "loadNextInterstitialPlatform: " + interstitial_sequence);
-                displayInterstitialAds(interstitial_sequence.get(0), activity);
+                displayInterstitialAds(interstitial_sequence.get(0), activity, isNeedResetCount);
             } else {
                 PrintLog(TAG, "loadNextInterstitialPlatform: " + interstitial_sequence);
                 AdsHelperClass.isShowingFullScreenAd = false;
@@ -863,7 +865,7 @@ public class AppManage {
         }
     }
 
-    private void displayInterstitialAd(String platform, final Context context) {
+    private void displayInterstitialAd(String platform, final Context context,boolean isNeedResetCount) {
 
         if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
 
@@ -888,7 +890,7 @@ public class AppManage {
 
               /*          AdsHelperClass.isShowingFullScreenAd = false;
                         interstitialCallBack();*/
-                        loadNextInterstitialPlatform();
+                        loadNextInterstitialPlatform(isNeedResetCount);
                     }
 
                     @Override
@@ -943,7 +945,7 @@ public class AppManage {
                         // Called when fullscreen content failed to show.
                         PrintLog(TAG, "The ad failed to show.");
 
-                        loadNextInterstitialPlatform();
+                        loadNextInterstitialPlatform(isNeedResetCount);
 
                     }
 
@@ -997,7 +999,7 @@ public class AppManage {
                         PrintLog(TAG, "onAdLoadFailed: " + error.getMessage());
 
                         appLovin_interstitialAd = null;
-                        loadNextInterstitialPlatform();
+                        loadNextInterstitialPlatform(isNeedResetCount);
 
 
                     }
@@ -1007,7 +1009,7 @@ public class AppManage {
                         PrintLog(TAG, "onAdDisplayFailed: " + error.getMessage());
 
                         appLovin_interstitialAd = null;
-                        loadNextInterstitialPlatform();
+                        loadNextInterstitialPlatform(isNeedResetCount);
 
 
                     }
@@ -1032,7 +1034,7 @@ public class AppManage {
                     public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
                         PrintLog(TAG, "onInterstitialAdLoadFailed: " + ironSourceError.getErrorMessage());
 
-                        loadNextInterstitialPlatform();
+                        loadNextInterstitialPlatform(isNeedResetCount);
 
 
                     }
@@ -1046,7 +1048,7 @@ public class AppManage {
                     @Override
                     public void onInterstitialAdClosed() {
 
-                        loadNextInterstitialPlatform();
+                        loadNextInterstitialPlatform(isNeedResetCount);
 
                     }
 
@@ -1059,7 +1061,7 @@ public class AppManage {
                         PrintLog(TAG, "onInterstitialAdShowFailed: " + ironSourceError.getErrorMessage());
 
 
-                        loadNextInterstitialPlatform();
+                        loadNextInterstitialPlatform(isNeedResetCount);
 
 
                     }
@@ -1080,7 +1082,7 @@ public class AppManage {
         }
     }
 
-    private void displayPreInterstitialAd(String platform, final Context context) {
+    private void displayPreInterstitialAd(String platform, final Context context,Boolean isNeedResetCount) {
 
         if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
 
@@ -1143,7 +1145,7 @@ public class AppManage {
                     public void onAdFailedToShowFullScreenContent(com.google.android.gms.ads.AdError adError) {
                         // Called when fullscreen content failed to show.
                         PrintLog(TAG, "The ad failed to show.");
-                        loadNextInterstitialPlatform();
+                        loadNextInterstitialPlatform(isNeedResetCount);
                         AdsHelperClass.isShowingFullScreenAd = false;
                         interstitialCallBack();
                     }
@@ -1294,14 +1296,33 @@ public class AppManage {
             return;
         }
 
-        /*if(*//*(AdsHelperClass.getInterstitialFirstClick() == 0 ||  AdsHelperClass.getInterstitialFirstClick() == 1) &&*//* count_click <= AdsHelperClass.getInterstitialFirstClick()){
-            loadAndShowFullScreenAdsonFirstClick( context,how_many_clicks);
+        PrintLog("AdsClick: ", "count_click : " + count_click + "  how_many_clicks: " + how_many_clicks);
+        PrintLog("AdsClick: ", "interstitialCountMultiplier : " + AdsHelperClass.getInterstitialCountMultiplier());
+        PrintLog("AdsClick: ", "showTime : " + showTime);
+
+        int howManyClicksNew  = how_many_clicks;
+        if(AdsHelperClass.getInterstitialCountMultiplier() == 1 && showTime == 0){
+            howManyClicksNew = how_many_clicks;
+        }else  if(AdsHelperClass.getInterstitialCountMultiplier() == 0 && showTime == 0){
+            howManyClicksNew = how_many_clicks;
         }else {
-            loadAndShowFullScreenAds( context, how_many_clicks);
-        }*/
-        if ((AdsHelperClass.getinterstitialCount() > AdsHelperClass.getInterstitialFirstClick() && count_click == AdsHelperClass.getInterstitialFirstClick())
-                || (count_click > 0 && count_click % AdsHelperClass.getinterstitialCount() == 0)) {
-            loadAndShowFullScreenAds(context, how_many_clicks);
+            if(showTime > 0 && AdsHelperClass.getInterstitialCountMultiplier()>0){
+                PrintLog("AdsClick: ", "oldShowcount : " + oldShowcount);
+                howManyClicksNew = oldShowcount*AdsHelperClass.getInterstitialCountMultiplier();
+            }
+        }
+
+        PrintLog("AdsClick: ", "howManyClicksNew : " + howManyClicksNew);
+
+
+        if ((AdsHelperClass.getinterstitialCount() > AdsHelperClass.getInterstitialFirstClick() && count_click == AdsHelperClass.getInterstitialFirstClick()) && !isFirstTimeShow) {
+
+            loadAndShowFullScreenAds(context,false);
+            isFirstTimeShow = true;
+        }else if (AdsHelperClass.getinterstitialCount() > AdsHelperClass.getInterstitialFirstClick() && (count_click > 0 && count_click % howManyClicksNew == 0) /*&& isFirstTimeShow*/) {
+            showTime++;
+            oldShowcount = howManyClicksNew;
+            loadAndShowFullScreenAds(context,true);
         } else {
             if (intermyCallback != null) {
                 intermyCallback.callbackCall();
@@ -1312,16 +1333,20 @@ public class AppManage {
 
     }
 
-    private void loadAndShowFullScreenAdsonFirstClick(Context context, int how_many_clicks) {
+    public static int oldShowcount = -1;
+
+    public static boolean isFirstTimeShow = false;
+
+    private void loadAndShowFullScreenAdsonFirstClick(Context context, int how_many_clicks,boolean isNeedResetCount) {
         //preload things to show
         if (mInterstitialAdPre != null && AdsHelperClass.getAdmobAdStatus() == 1 && count_click == AdsHelperClass.getInterstitialFirstClick()) {
-            displayPreInterstitialAd(AdsHelperClass.ADMOB, activity);
+            displayPreInterstitialAd(AdsHelperClass.ADMOB, activity,isNeedResetCount);
         } else if (mAdManagerInterstitialAdPre != null && AdsHelperClass.getAdXAdStatus() == 1 && count_click == AdsHelperClass.getInterstitialFirstClick()) {
-            displayPreInterstitialAd(AdsHelperClass.ADX, activity);
+            displayPreInterstitialAd(AdsHelperClass.ADX, activity,isNeedResetCount);
         } else if (mFbInterstitialAdPre != null && AdsHelperClass.getFBAdStatus() == 1 && count_click == AdsHelperClass.getInterstitialFirstClick()) {
-            displayPreInterstitialAd(AdsHelperClass.FACEBOOK, activity);
+            displayPreInterstitialAd(AdsHelperClass.FACEBOOK, activity,isNeedResetCount);
         } else if (appLovin_interstitialAdPre != null && AdsHelperClass.getApplovinAdStatus() == 1 && count_click == AdsHelperClass.getInterstitialFirstClick()) {
-            displayPreInterstitialAd(AdsHelperClass.APPLOVIN, activity);
+            displayPreInterstitialAd(AdsHelperClass.APPLOVIN, activity,isNeedResetCount);
         } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             displayPreInterstitialAd(AdsHelperClass.IRON, activity);
         }*/ else {
@@ -1340,7 +1365,7 @@ public class AppManage {
 
 
                 if (interstitial_sequence.size() != 0) {
-                    displayInterstitialAds(interstitial_sequence.get(0), context);
+                    displayInterstitialAds(interstitial_sequence.get(0), context, isNeedResetCount);
                 } else {
                     interstitialCallBack();
                 }
@@ -1354,16 +1379,16 @@ public class AppManage {
     }
 
 
-    private void loadAndShowFullScreenAds(Context context, int how_many_clicks) {
+    private void loadAndShowFullScreenAds(Context context,boolean isNeedResetCount) {
         //preload things to show
         if (mInterstitialAdPre != null && AdsHelperClass.getAdmobAdStatus() == 1) {
-            displayPreInterstitialAd(AdsHelperClass.ADMOB, activity);
+            displayPreInterstitialAd(AdsHelperClass.ADMOB, activity,isNeedResetCount);
         } else if (mAdManagerInterstitialAdPre != null && AdsHelperClass.getAdXAdStatus() == 1) {
-            displayPreInterstitialAd(AdsHelperClass.ADX, activity);
+            displayPreInterstitialAd(AdsHelperClass.ADX, activity,isNeedResetCount);
         } else if (mFbInterstitialAdPre != null && AdsHelperClass.getFBAdStatus() == 1) {
-            displayPreInterstitialAd(AdsHelperClass.FACEBOOK, activity);
+            displayPreInterstitialAd(AdsHelperClass.FACEBOOK, activity,isNeedResetCount);
         } else if (appLovin_interstitialAdPre != null && AdsHelperClass.getApplovinAdStatus() == 1) {
-            displayPreInterstitialAd(AdsHelperClass.APPLOVIN, activity);
+            displayPreInterstitialAd(AdsHelperClass.APPLOVIN, activity,isNeedResetCount);
         } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             displayPreInterstitialAd(AdsHelperClass.IRON, activity);
         }*/ else {
@@ -1380,7 +1405,7 @@ public class AppManage {
 
 
             if (interstitial_sequence.size() != 0) {
-                displayInterstitialAds(interstitial_sequence.get(0), context);
+                displayInterstitialAds(interstitial_sequence.get(0), context,isNeedResetCount);
             } else {
                 interstitialCallBack();
             }
@@ -1410,7 +1435,14 @@ public class AppManage {
         }
     }
 
-    private void displayInterstitialAds(String platform, final Context activity) {
+    private void resetClickCount(boolean isNeedResetCount){
+        if(isNeedResetCount){
+            count_click = 0;
+        }
+
+    }
+
+    private void displayInterstitialAds(String platform, final Context activity,boolean isNeedResetCount) {
 
         if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
             if (TextUtils.isEmpty(AdsHelperClass.getAdmobInterId())) {
@@ -1424,10 +1456,11 @@ public class AppManage {
                 public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
                     // The mInterstitialAd reference will be null until
                     // an ad is loaded.
+                    resetClickCount(isNeedResetCount);
                     mInterstitialAd = interstitialAd;
                     PrintLog(TAG, "onAdLoaded");
                     hideDialog();
-                    displayInterstitialAd(AdsHelperClass.ADMOB, activity);
+                    displayInterstitialAd(AdsHelperClass.ADMOB, activity,isNeedResetCount);
 
 
                 }
@@ -1437,7 +1470,7 @@ public class AppManage {
                     // Handle the error
                     PrintLog(TAG, loadAdError.getMessage());
                     mInterstitialAd = null;
-                    loadNextInterstitialPlatform();
+                    loadNextInterstitialPlatform(isNeedResetCount);
 
                 }
             });
@@ -1477,17 +1510,18 @@ public class AppManage {
                 /*    AdsHelperClass.isShowingFullScreenAd = false;
                     hideDialog();
                     interstitialCallBack();*/
-                    loadNextInterstitialPlatform();
+                    loadNextInterstitialPlatform(isNeedResetCount);
 
 
                 }
 
                 @Override
                 public void onAdLoaded(Ad ad) {
+                    resetClickCount(isNeedResetCount);
                     mFbInterstitialAd = (com.facebook.ads.InterstitialAd) ad;
                     PrintLog(TAG, "onAdLoaded");
                     hideDialog();
-                    displayInterstitialAd(AdsHelperClass.FACEBOOK, activity);
+                    displayInterstitialAd(AdsHelperClass.FACEBOOK, activity,isNeedResetCount);
 
                 }
 
@@ -1514,9 +1548,10 @@ public class AppManage {
                     new AdManagerInterstitialAdLoadCallback() {
                         @Override
                         public void onAdLoaded(@NonNull AdManagerInterstitialAd interstitialAd) {
+                            resetClickCount(isNeedResetCount);
                             mAdManagerInterstitialAd = interstitialAd;
                             hideDialog();
-                            displayInterstitialAd(AdsHelperClass.ADX, activity);
+                            displayInterstitialAd(AdsHelperClass.ADX, activity,isNeedResetCount);
 
 
                         }
@@ -1527,7 +1562,7 @@ public class AppManage {
                             PrintLog(TAG, "onAdFailedToLoad: " + loadAdError.getMessage());
 
                             mAdManagerInterstitialAd = null;
-                            loadNextInterstitialPlatform();
+                            loadNextInterstitialPlatform(isNeedResetCount);
 
                         }
                     });
@@ -1545,10 +1580,11 @@ public class AppManage {
             appLovin_interstitialAd.setListener(new MaxAdListener() {
                 @Override
                 public void onAdLoaded(MaxAd ad) {
+                    resetClickCount(isNeedResetCount);
                     PrintLog(TAG, "Applovin InterstitialAd ===> onAdLoaded");
                     hideDialog();
 
-                    displayInterstitialAd(AdsHelperClass.APPLOVIN, activity);
+                    displayInterstitialAd(AdsHelperClass.APPLOVIN, activity,isNeedResetCount);
                 }
 
                 @Override
@@ -1577,7 +1613,7 @@ public class AppManage {
                     PrintLog(TAG, "Applovin InterstitialAd ===> onAdLoadFailed: " + error.getMessage());
 
                     appLovin_interstitialAd = null;
-                    loadNextInterstitialPlatform();
+                    loadNextInterstitialPlatform(isNeedResetCount);
 
 
                 }
@@ -1588,7 +1624,7 @@ public class AppManage {
 
                     appLovin_interstitialAd = null;
 
-                    loadNextInterstitialPlatform();
+                    loadNextInterstitialPlatform(isNeedResetCount);
 
 
                 }
@@ -1606,15 +1642,15 @@ public class AppManage {
                 @Override
                 public void onInterstitialAdReady() {
                     hideDialog();
-
-                    displayInterstitialAd(AdsHelperClass.IRON, activity);
+                    resetClickCount(isNeedResetCount);
+                    displayInterstitialAd(AdsHelperClass.IRON, activity,isNeedResetCount);
                 }
 
                 @Override
                 public void onInterstitialAdLoadFailed(IronSourceError ironSourceError) {
                     PrintLog(TAG, ironSourceError.getErrorMessage());
 
-                    loadNextInterstitialPlatform();
+                    loadNextInterstitialPlatform(isNeedResetCount);
 
 
                 }
@@ -1642,7 +1678,7 @@ public class AppManage {
                     PrintLog(TAG, "onInterstitialAdShowFailed: " + ironSourceError.getErrorMessage());
 
 
-                    loadNextInterstitialPlatform();
+                    loadNextInterstitialPlatform(isNeedResetCount);
 
 
                 }

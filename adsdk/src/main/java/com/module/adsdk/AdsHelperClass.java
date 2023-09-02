@@ -220,6 +220,13 @@ public class AdsHelperClass {
     public static void setinterstitialCount(int i) {
         SharedPreferencesClass.getInstance().setInt("interstitialCount", i);
     }
+    public static int getInterstitialCountMultiplier() {
+        return SharedPreferencesClass.getInstance().getInt("interstitialCountMultiplier", 1);
+    }
+
+    public static void setInterstitialCountMultiplier(int i) {
+        SharedPreferencesClass.getInstance().setInt("interstitialCountMultiplier", i);
+    }
 
     public static int getExitAdEnable() {
         return SharedPreferencesClass.getInstance().getInt("exitAdEnable", 0);

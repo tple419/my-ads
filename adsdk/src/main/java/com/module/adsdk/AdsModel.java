@@ -95,6 +95,18 @@ public class AdsModel {
     @Expose
     private int interstitial_count;
 
+    @SerializedName("interstitialCountMultiplier")
+    @Expose
+    private int interstitialCountMultiplier;
+
+    public int getInterstitialCountMultiplier() {
+        return interstitialCountMultiplier;
+    }
+
+    public void setInterstitialCountMultiplier(int interstitialCountMultiplier) {
+        this.interstitialCountMultiplier = interstitialCountMultiplier;
+    }
+
     @SerializedName("exit_ad_enable")
     @Expose
     private int exitAdEnable;
