@@ -271,16 +271,12 @@ public class AdsHelperClass {
     public static String getAdmobNativeId() {
         return SharedPreferencesClass.getInstance().getString("AdmobNativeId", "");
     }
-public static String getAdmobSmallNativeId() {
-        return SharedPreferencesClass.getInstance().getString("AdmobSmallNativeId", "");
-    }
+
 
     public static void setAdmobNativeId(String i) {
         SharedPreferencesClass.getInstance().setString("AdmobNativeId", i);
     }
-public static void setAdmobSmallNativeId(String i) {
-        SharedPreferencesClass.getInstance().setString("AdmobSmallNativeId", i);
-    }
+
 
     public static String getAdmobInterId() {
         return SharedPreferencesClass.getInstance().getString("AdmobInterId", "");
@@ -314,13 +310,7 @@ public static void setAdmobSmallNativeId(String i) {
         SharedPreferencesClass.getInstance().setString("AdxNativeId", i);
     }
 
-    public static String getAdxSmallNativeId() {
-        return SharedPreferencesClass.getInstance().getString("AdxSmallNativeId", "");
-    }
 
-    public static void setAdxSmallNativeId(String i) {
-        SharedPreferencesClass.getInstance().setString("AdxSmallNativeId", i);
-    }
 
     public static String getAdxInterId() {
         return SharedPreferencesClass.getInstance().getString("AdxInterId", "");
@@ -345,13 +335,7 @@ public static void setAdmobSmallNativeId(String i) {
     public static void setFBNativeId(String i) {
         SharedPreferencesClass.getInstance().setString("FBNativeId", i);
     }
-public static String getFBSmallNativeId() {
-        return SharedPreferencesClass.getInstance().getString("FBSmallNative", "");
-    }
 
-    public static void setFBSmallNativeId(String i) {
-        SharedPreferencesClass.getInstance().setString("FBSmallNative", i);
-    }
 
     public static String getFBInterId() {
         return SharedPreferencesClass.getInstance().getString("FBInterId", "");
@@ -584,13 +568,7 @@ public static String getFBSmallNativeId() {
     public static void setIsOnLoadNative(int i) {
         SharedPreferencesClass.getInstance().setInt("isOnLoadNative", i);
     }
-public static int getIsOnLoadNativeSmall() {
-        return SharedPreferencesClass.getInstance().getInt("isOnLoadNativeSmall", 0);
-    }
 
-    public static void setIsOnLoadNativeSmall(int i) {
-        SharedPreferencesClass.getInstance().setInt("isOnLoadNativeSmall", i);
-    }
 
     public static int getInterstitialFirstClick() {
         return SharedPreferencesClass.getInstance().getInt("interstitialFirstClick", 3);
@@ -681,6 +659,23 @@ public static int getIsOnLoadNativeSmall() {
     public static void setIsGDPROnFailed(int i) {
         SharedPreferencesClass.getInstance().setInt("isGDPROnFailed", i);
     }
+
+    public static boolean isUserFirstTime() {
+        return SharedPreferencesClass.getInstance().getBoolean("isUserFirstTime", true);
+    }
+
+    public static void setIsUserFirstTime(boolean i) {
+        SharedPreferencesClass.getInstance().setBoolean("isUserFirstTime", i);
+    }
+    public static String IS_SHOW_INTRO = "IS_SHOW_INTRO";
+      public static boolean getShowIntro() {
+        return SharedPreferencesClass.getInstance().getBoolean(IS_SHOW_INTRO, false);
+    }
+
+    public static void setShowIntro(boolean str) {
+        SharedPreferencesClass.getInstance().setBoolean(IS_SHOW_INTRO, str);
+    }
+
 
 
 }

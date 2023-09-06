@@ -1,10 +1,14 @@
 package com.module.adsdk;
 
+import static com.module.adsdk.PreferencesHandler.MyPrefsKey1;
+
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,56 +33,79 @@ public class AdsSplashActivity extends AppCompatActivity {
 
 
     }
-
-    public void ADInit(String response, final Activity activity, List<String> testDeviceIds, final int cversion, final getAdsDataListner myCallback1) {
+    boolean isTimeOut = false;
+    public void ADInit(boolean isGalleryApp , String response, final Activity activity, List<String> testDeviceIds, final int cversion, final getAdsDataListner myCallback1) {
         //set in preference
         AdsHelperClass.setRemoteData(response);
         AppManage.getInstance(activity).getResponseFromPref(new getAdsDataListner() {
             @Override
             public void onSuccess() {
-                if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNative() == 0) {
-                    AppManage.getInstance(activity).PreLoadNative(false);
+                if(isGalleryApp){
+                    adsTask(activity);
+                }else {
+                    if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNative() == 0) {
+                        AppManage.getInstance(activity).PreLoadNative(1);
+                    }
                 }
-               /* if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNativeSmall() == 0) {
-                    AppManage.getInstance(activity).PreLoadNative(true);
-                }*/
-                 manager = new AppOpenManagerSplash(activity);
+                manager = new AppOpenManagerSplash(activity);
+
+                new Handler(Looper.myLooper()).postDelayed(() -> {
+                    Log.e("AppStartFrom", "time out");
+                    isTimeOut = true;
+
+                    myCallback1.onTimeout();
+                    return;
+                }, AdsHelperClass.getSplash_time() * 1000L);
+
                 if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1 && AdsHelperClass.getIsPreloadSplashAd() == 1 ) {
-                    myCallback1.onSuccess();
+                   if(!isTimeOut) {
+                       myCallback1.onSuccess();
+                   }
+
                 }else if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getSplash_ad_type() == 2  && isNetworkAvailable() && AdsHelperClass.getIs_splash_on() == 1) {
-                            myCallback1.onSuccess();
+                    if(!isTimeOut) {
+                        myCallback1.onSuccess();
+                    }
                 } else if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getSplash_ad_type() == 1 && AdsHelperClass.getIs_splash_on()==1 && AdsHelperClass.getappOpenAdStatus() == 1 && isNetworkAvailable()) {
                     //app open load
-                     AdsHelperClass.isIsShowingFullScreenAdSplash=true;
+
                     manager.showAdIfAvailableSplash(new AppOpenManagerSplash.splshADlistner() {
                             @Override
                             public void onSuccess() {
+                                if(!isTimeOut) {
+                                    AdsHelperClass.isIsShowingFullScreenAdSplash=true;
+                                    manager.showAdIfAvailableSplash(new AppOpenManagerSplash.splshADlistner() {
+                                        @Override
+                                        public void onSuccess() {
+                                            AdsHelperClass.isIsShowingFullScreenAdSplash=false;
+                                            myCallback1.onSuccess();
+                                        }
 
-                                manager.showAdIfAvailableSplash(new AppOpenManagerSplash.splshADlistner() {
-                                    @Override
-                                    public void onSuccess() {
-                                        AdsHelperClass.isIsShowingFullScreenAdSplash=false;
-                                        myCallback1.onSuccess();
-                                    }
+                                        @Override
+                                        public void onError(String error) {
+                                            AdsHelperClass.isIsShowingFullScreenAdSplash=false;
+                                            myCallback1.onSuccess();
+                                        }
+                                    });
+                                }
 
-                                    @Override
-                                    public void onError(String error) {
-                                        AdsHelperClass.isIsShowingFullScreenAdSplash=false;
-                                        myCallback1.onSuccess();
-                                    }
-                                });
 
                             }
 
                             @Override
                             public void onError(String error) {
-                                AdsHelperClass.isIsShowingFullScreenAdSplash=false;
-                                myCallback1.onSuccess();
+                                if(!isTimeOut) {
+                                    AdsHelperClass.isIsShowingFullScreenAdSplash=false;
+                                    myCallback1.onSuccess();
+                                }
+
                             }
                         });
 
                 }else {
-                    myCallback1.onSuccess();
+                    if(!isTimeOut) {
+                        myCallback1.onSuccess();
+                    }
                 }
             }
 
@@ -96,11 +123,37 @@ public class AdsSplashActivity extends AppCompatActivity {
             public void onReload() {
             }
 
+            @Override
+            public void onTimeout() {
 
+            }
 
 
         },testDeviceIds, cversion);
     }
+
+    public void adsTask( Activity activity){
+        AppOpenAdsManager.isAD = false;
+        if (PreferencesHandler.getBooleanInstall(MyPrefsKey1, activity)) {
+            AdsHelperClass.setFirst_ad_hide(1);
+        } else {
+            AdsHelperClass.setFirst_ad_hide(AdsHelperClass.getFirst_ad_hide());
+        }
+
+        if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.isUserFirstTime()) {
+            AdsHelperClass.setIsUserFirstTime(false);
+            AppManage.getInstance(activity).PreLoadNative(1);
+        }else {
+            if (!AdsHelperClass.getShowIntro()){
+                AppManage.getInstance(activity).PreLoadNative(1);
+            }else {
+                if (AdsHelperClass.getAdShowStatus() == 1 && AdsHelperClass.getIsOnLoadNative() == 0) {
+                    AppManage.getInstance(activity).PreLoadNative(1);
+                }
+            }
+        }
+    }
+
 
 
 

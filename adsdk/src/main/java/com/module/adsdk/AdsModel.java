@@ -27,17 +27,7 @@ public class AdsModel {
     @Expose
     private int isOnLoadNative = 0;
 
-    @SerializedName("isOnLoadNativeSmall")
-    @Expose
-    private int isOnLoadNativeSmall = 0;
 
-    public int getIsOnLoadNativeSmall() {
-        return isOnLoadNativeSmall;
-    }
-
-    public void setIsOnLoadNativeSmall(int isOnLoadNativeSmall) {
-        this.isOnLoadNativeSmall = isOnLoadNativeSmall;
-    }
 
     @SerializedName("isBannerSpaceVisible")
     @Expose
@@ -130,17 +120,8 @@ public class AdsModel {
     @Expose
     private String Admob_nativeid;
 
-    @SerializedName("AdmobSmallNativeId")
-    @Expose
-    private String Admob_small_nativeid;
 
-    public String getAdmob_small_nativeid() {
-        return Admob_small_nativeid;
-    }
 
-    public void setAdmob_small_nativeid(String admob_small_nativeid) {
-        Admob_small_nativeid = admob_small_nativeid;
-    }
 
     @SerializedName("AdmobInterId")
     @Expose
@@ -158,17 +139,7 @@ public class AdsModel {
     @SerializedName("AdxNativeId")
     @Expose
     private String Adx_nativeid;
-  @SerializedName("AdxSmallNativeId")
-    @Expose
-    private String Adx_small_nativeid;
 
-    public String getAdx_small_nativeid() {
-        return Adx_small_nativeid;
-    }
-
-    public void setAdx_small_nativeid(String adx_small_nativeid) {
-        Adx_small_nativeid = adx_small_nativeid;
-    }
 
     @SerializedName("AdxInterId")
     @Expose
@@ -203,9 +174,7 @@ public class AdsModel {
     @SerializedName("FBNative")
     @Expose
     private String FBNative;
-@SerializedName("FBSmallNative")
-    @Expose
-    private String FBSmallNative;
+
 
     @SerializedName("FBInter")
     @Expose
@@ -646,13 +615,7 @@ public class AdsModel {
         return FBNative;
     }
 
-    public String getFBSmallNative() {
-        return FBSmallNative;
-    }
 
-    public void setFBSmallNative(String FBSmallNative) {
-        this.FBSmallNative = FBSmallNative;
-    }
 
     public void setFBNative(String FBNative) {
         this.FBNative = FBNative;

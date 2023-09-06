@@ -8,5 +8,5 @@ public interface getAdsDataListner {
     void onRedirect(String url);
 
     void onReload();
-
+    void onTimeout();
 }
