@@ -41,11 +41,11 @@ dependencies {
 
 
     //ironsource
-    implementation 'com.ironsource.sdk:mediationsdk:7.3.0.1'
+//    implementation 'com.ironsource.sdk:mediationsdk:7.3.0.1'
 
-    implementation 'com.google.ads.mediation:applovin:11.11.1.0'
+    implementation 'com.google.ads.mediation:applovin:11.11.3.0'
     //ads
-    implementation 'com.google.android.gms:play-services-ads:22.2.0'
+    implementation 'com.google.android.gms:play-services-ads:22.3.0'
     //admob ma fb mediation
     implementation 'com.google.ads.mediation:facebook:6.15.0.0'
 
@@ -55,7 +55,7 @@ dependencies {
 
 //    applovin ma fb + google + adx mediation
     //Applovin
-    implementation 'com.applovin:applovin-sdk:11.10.1'
+    implementation 'com.applovin:applovin-sdk:11.11.3'
     implementation 'com.applovin.mediation:facebook-adapter:6.14.0.0'
     implementation 'com.applovin.mediation:google-adapter:22.1.0.2'
     implementation("com.applovin.mediation:google-ad-manager-adapter:21.3.0.2")

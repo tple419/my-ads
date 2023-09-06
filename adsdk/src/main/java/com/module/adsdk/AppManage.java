@@ -67,12 +67,12 @@ import com.google.android.ump.ConsentRequestParameters;
 import com.google.android.ump.UserMessagingPlatform;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.ironsource.mediationsdk.ISBannerSize;
-import com.ironsource.mediationsdk.IronSource;
-import com.ironsource.mediationsdk.IronSourceBannerLayout;
-import com.ironsource.mediationsdk.logger.IronSourceError;
-import com.ironsource.mediationsdk.sdk.BannerListener;
-import com.ironsource.mediationsdk.sdk.InterstitialListener;
+//import com.ironsource.mediationsdk.ISBannerSize;
+//import com.ironsource.mediationsdk.IronSource;
+//import com.ironsource.mediationsdk.IronSourceBannerLayout;
+//import com.ironsource.mediationsdk.logger.IronSourceError;
+//import com.ironsource.mediationsdk.sdk.BannerListener;
+//import com.ironsource.mediationsdk.sdk.InterstitialListener;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,8 +100,8 @@ public class AppManage {
     ArrayList<String> banner_sequence = new ArrayList<>();
     ArrayList<String> native_sequence = new ArrayList<>();
     ArrayList<String> interstitial_sequence = new ArrayList<>();
-    IronSourceBannerLayout mIronSourceBannerLayout;
-    IronSourceBannerLayout mIronSourceNativeLayout;
+//    IronSourceBannerLayout mIronSourceBannerLayout;
+//    IronSourceBannerLayout mIronSourceNativeLayout;
     private InterstitialAd mInterstitialAd;
     private InterstitialAd mInterstitialAdPre = null;
     private com.facebook.ads.InterstitialAd mFbInterstitialAd;
@@ -114,7 +114,7 @@ public class AppManage {
     private NativeAd preAdmobNative;
 
     private NativeAd preAdxNative;
-    private IronSourceBannerLayout preIronSourceNativeLayout;
+//    private IronSourceBannerLayout preIronSourceNativeLayout;
     private MaxNativeAdView preMaxNativeAdView;
 
     public AppManage(Activity activity) {
@@ -315,10 +315,10 @@ public class AppManage {
             if (TextUtils.isEmpty(adUnitId)) {
                 return;
             }
-            IronSource.init(activity, adUnitId);
-            IronSource.getAdvertiserId(activity);
+//            IronSource.init(activity, adUnitId);
+//            IronSource.getAdvertiserId(activity);
             //Network Connectivity Status
-            IronSource.shouldTrackNetworkState(activity, true);
+//            IronSource.shouldTrackNetworkState(activity, true);
         }
 
         if (AdsHelperClass.getAdmobAdStatus() == 1 || AdsHelperClass.getAdXAdStatus() == 1) {
@@ -766,7 +766,7 @@ public class AppManage {
                 interstitialCallBack();
             }
 
-        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             if (IronSource.isInterstitialReady()) {
                 IronSource.setInterstitialListener(new InterstitialListener() {
                     @Override
@@ -816,7 +816,7 @@ public class AppManage {
                 interstitialCallBack();
             }
 
-        } else {
+        }*/ else {
             interstitialCallBack();
         }
     }
@@ -971,7 +971,7 @@ public class AppManage {
                 interstitialCallBack();
             }
 
-        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             if (IronSource.isInterstitialReady()) {
                 int count = AdsHelperClass.getFullScreenAdsShowedCount();
                 AdsHelperClass.setFullScreenAdsShowedCount(count + 1);
@@ -1027,7 +1027,7 @@ public class AppManage {
                 interstitialCallBack();
             }
 
-        } else {
+        }*/ else {
             interstitialCallBack();
         }
     }
@@ -1160,7 +1160,7 @@ public class AppManage {
                 interstitialCallBack();
             }
 
-        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             if (IronSource.isInterstitialReady()) {
                 IronSource.setInterstitialListener(new InterstitialListener() {
                     @Override
@@ -1208,7 +1208,7 @@ public class AppManage {
             } else {
                 interstitialCallBack();
             }
-        } else {
+        } */else {
             interstitialCallBack();
         }
     }
@@ -1579,7 +1579,7 @@ public class AppManage {
             });
             appLovin_interstitialAd.loadAd();
             PrintLog(TAG, "Applovin loadAd");
-        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        }/* else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             if (TextUtils.isEmpty(AdsHelperClass.getironappkey())) {
                 return;
             }
@@ -1638,7 +1638,7 @@ public class AppManage {
             });
 
 
-        } else {
+        }*/ else {
             interstitialCallBack();
         }
     }
@@ -1790,7 +1790,7 @@ public class AppManage {
             appLovin_interstitialAd.loadAd();
 
 
-        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             if (TextUtils.isEmpty(AdsHelperClass.getironappkey())) {
                 return;
             }
@@ -1832,7 +1832,7 @@ public class AppManage {
 
                 }
             });
-        }
+        }*/
     }
 
 
@@ -2011,7 +2011,7 @@ public class AppManage {
             appLovin_interstitialAd.loadAd();
 
 
-        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             if (TextUtils.isEmpty(AdsHelperClass.getironappkey())) {
                 return;
             }
@@ -2067,7 +2067,7 @@ public class AppManage {
             });
 
 
-        } else {
+        }*/ else {
             interstitialCallBack();
         }
     }
@@ -2153,9 +2153,9 @@ public class AppManage {
             showFBBanner(banner_container, View.GONE);
         } else if (platform.equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
             showAppLovinBanner(banner_container, View.GONE);
-        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             showIronSourceBanner(banner_container, View.GONE);
-        }
+        }*/
     }
 
     public void displayBannerInvisible(String platform, ViewGroup banner_container) {
@@ -2167,9 +2167,9 @@ public class AppManage {
             showFBBanner(banner_container, View.INVISIBLE);
         } else if (platform.equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
             showAppLovinBanner(banner_container, View.INVISIBLE);
-        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        } /*else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             showIronSourceBanner(banner_container, View.INVISIBLE);
-        }
+        }*/
     }
 
     private void showAdxBanner(ViewGroup banner_container, int visibility) {
@@ -2427,7 +2427,7 @@ public class AppManage {
         }
     }
 
-    private void showIronSourceBanner(ViewGroup banner_container, int visibility) {
+   /* private void showIronSourceBanner(ViewGroup banner_container, int visibility) {
         if (AdsHelperClass.getironappkey().isEmpty()) {
             return;
         }
@@ -2490,7 +2490,7 @@ public class AppManage {
             }
         }
     }
-
+*/
     public void PreLoadNative(int nativeViewType) {
 
         if (!hasActiveInternetConnection(activity)) {
@@ -2618,7 +2618,7 @@ public class AppManage {
             } else {
                 PrintLog(TAG, "PreLoadNative: AlreadyLoaded");
             }
-        } else if (s.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        } /*else if (s.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
 
             if (AdsHelperClass.getironappkey().isEmpty()) {
                 return;
@@ -2671,7 +2671,7 @@ public class AppManage {
             } else {
                 PrintLog(TAG, "PreLoadNative: AlreadyLoaded");
             }
-        } else if (s.equals(AdsHelperClass.FACEBOOK) && AdsHelperClass.getFBAdStatus() == 1) {
+        } */else if (s.equals(AdsHelperClass.FACEBOOK) && AdsHelperClass.getFBAdStatus() == 1) {
 
             if (AdsHelperClass.getFBNativeId().isEmpty()) {
                 return;
@@ -2777,7 +2777,7 @@ public class AppManage {
                 PrintLog(TAG, "PreLoadNative: ShowLoaded");
                 new Inflate_ADS(activity).inflate_NATIV_FB(preFbNative, nativeAdContainer, isNeedSpace, nativeViewType);
 
-            } else if (preIronSourceNativeLayout != null && native_sequence.get(0).equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+            } /*else if (preIronSourceNativeLayout != null && native_sequence.get(0).equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
                 PrintLog(TAG, "PreLoadNative: ShowLoaded");
                 if (isIronNativePreloaded) {
                     FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
@@ -2795,7 +2795,7 @@ public class AppManage {
                     nativeAdContainer.setVisibility(View.VISIBLE);
                 }
 
-            } else if (preMaxNativeAdView != null && native_sequence.get(0).equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
+            } */else if (preMaxNativeAdView != null && native_sequence.get(0).equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
                 PrintLog(TAG, "PreLoadNative: Applovin ShowLoaded");
 
                 nativeAdContainer.setVisibility(View.VISIBLE);
@@ -2879,7 +2879,7 @@ public class AppManage {
                 PrintLog(TAG, "PreLoadNative: ShowLoaded");
                 new Inflate_ADS(activity).inflate_NATIV_FB(preFbNative, nativeAdContainer, isNeedSpace, nativeViewType);
 
-            } else if (preIronSourceNativeLayout != null && native_sequence.get(0).equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+            } /*else if (preIronSourceNativeLayout != null && native_sequence.get(0).equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
                 PrintLog(TAG, "PreLoadNative: ShowLoaded");
                 if (isIronNativePreloaded) {
                     FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
@@ -2897,7 +2897,7 @@ public class AppManage {
                     nativeAdContainer.setVisibility(View.VISIBLE);
                 }
 
-            } else if (preMaxNativeAdView != null && native_sequence.get(0).equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
+            } */else if (preMaxNativeAdView != null && native_sequence.get(0).equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
                 PrintLog(TAG, "PreLoadNative: Applovin ShowLoaded");
 
                 nativeAdContainer.setVisibility(View.VISIBLE);
@@ -2978,9 +2978,9 @@ public class AppManage {
             showFBNative(nativeAdContainer, isNeedSpace, nativeViewType);
         } else if (platform.equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
             showAppLovinNativeCustom(nativeAdContainer, isNeedSpace, nativeViewType);
-        } else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+        }/* else if (platform.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
             showIronNative(nativeAdContainer, isNeedSpace, nativeViewType);
-        }
+        }*/
     }
 
     private void showAdmobNative(final ViewGroup nativeAdContainer, boolean isNeedSpace/*,boolean isNativeSmall*/, int nativeViewType) {
@@ -3172,7 +3172,7 @@ public class AppManage {
 
     }
 
-    private void showIronNative(ViewGroup nativeAdContainer, boolean isNeedSpace/*, boolean isNativeSmall*/, int nativeViewType) {
+    /*private void showIronNative(ViewGroup nativeAdContainer, boolean isNeedSpace*//*, boolean isNativeSmall*//*, int nativeViewType) {
         if (AdsHelperClass.getironappkey().isEmpty()) {
             nativeAdContainer.setVisibility(View.GONE);
             return;
@@ -3227,16 +3227,16 @@ public class AppManage {
         // load ad into the created banner
         IronSource.loadBanner(mIronSourceNativeLayout);
     }
-
-    public void PauseIronSourceNativePre(Activity activity) {
+*/
+   /* public void PauseIronSourceNativePre(Activity activity) {
         if (AdsHelperClass.getbannerSequence().equalsIgnoreCase(AdsHelperClass.IRON)) {
             if (preIronSourceNativeLayout != null) {
                 IronSource.onPause(activity);
             }
         }
-    }
+    }*/
 
-    public void ResumeIronSourceNativePre(FrameLayout banner_container, Activity activity, boolean isNeedSpace/*,boolean isNativeSmall*/, int nativeViewType) {
+    /*public void ResumeIronSourceNativePre(FrameLayout banner_container, Activity activity, boolean isNeedSpace*//*,boolean isNativeSmall*//*, int nativeViewType) {
         if (AdsHelperClass.getbannerSequence().equalsIgnoreCase(AdsHelperClass.IRON)) {
             if (preIronSourceNativeLayout != null) {
                 IronSource.destroyBanner(preIronSourceNativeLayout);
@@ -3245,9 +3245,9 @@ public class AppManage {
             }
         }
 
-    }
+    }*/
 
-    public void PauseIronSourceNative(Activity activity) {
+   /* public void PauseIronSourceNative(Activity activity) {
         if (AdsHelperClass.getbannerSequence().equalsIgnoreCase(AdsHelperClass.IRON)) {
             if (mIronSourceNativeLayout != null) {
                 IronSource.onPause(activity);
@@ -3255,7 +3255,7 @@ public class AppManage {
         }
     }
 
-    public void ResumeIronSourceNative(FrameLayout banner_container, Activity activity, boolean isNeedSpace/*,boolean isNativeSmall*/, int nativeViewType) {
+    public void ResumeIronSourceNative(FrameLayout banner_container, Activity activity, boolean isNeedSpace*//*,boolean isNativeSmall*//*, int nativeViewType) {
         if (AdsHelperClass.getbannerSequence().equalsIgnoreCase(AdsHelperClass.IRON)) {
             if (mIronSourceNativeLayout != null) {
                 IronSource.destroyBanner(mIronSourceNativeLayout);
@@ -3264,7 +3264,7 @@ public class AppManage {
             }
         }
 
-    }
+    }*/
 
     public interface MyInterstitialCallback {
         void callbackCall();
