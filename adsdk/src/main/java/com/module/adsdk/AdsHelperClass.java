@@ -16,7 +16,7 @@ public class AdsHelperClass {
     public static final String ADMOB = "admob";
     public static final String ADX = "adx";
     public static final String FACEBOOK = "fb";
-//    public static final String IRON = "iron";
+    public static final String IRON = "iron";
     public static final String APPLOVIN = "applovin";
     public static boolean isShowingFullScreenAd = false;
     public static boolean isIsShowingFullScreenAdSplash = false;
