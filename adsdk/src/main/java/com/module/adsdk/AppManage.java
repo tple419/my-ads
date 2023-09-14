@@ -1271,7 +1271,7 @@ public class AppManage {
 
             loadAndShowFullScreenAds(context, false);
             isFirstTimeShow = true;
-        } else if (AdsHelperClass.getinterstitialCount() > AdsHelperClass.getInterstitialFirstClick() && (count_click > 0 && count_click % howManyClicksNew == 0) /*&& isFirstTimeShow*/) {
+        } else if (AdsHelperClass.getinterstitialCount() > 0 && (count_click > 0 && count_click % howManyClicksNew == 0) /*&& isFirstTimeShow*/) {
             showTime++;
             oldShowcount = howManyClicksNew;
             loadAndShowFullScreenAds(context, true);
