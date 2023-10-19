@@ -6,6 +6,7 @@ import static com.module.adsdk.BuildConfig.DEBUG;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -22,6 +23,7 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.applovin.mediation.MaxAd;
 import com.applovin.mediation.MaxAdListener;
@@ -82,6 +84,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class AppManage {
     private static final String TAG = "AppManage";
+
     public static AtomicBoolean isMobileAdsInitializeCalled = new AtomicBoolean(false);
     public static int count_click = -1;
     public static int nativeSmallAdSize = 150;
@@ -1266,7 +1269,6 @@ public class AppManage {
 
         PrintLog("AdsClick: ", "howManyClicksNew : " + howManyClicksNew);
 
-
         if ((AdsHelperClass.getinterstitialCount() > AdsHelperClass.getInterstitialFirstClick() && count_click == AdsHelperClass.getInterstitialFirstClick()) && !isFirstTimeShow) {
 
             loadAndShowFullScreenAds(context, false);
@@ -1276,13 +1278,86 @@ public class AppManage {
             oldShowcount = howManyClicksNew;
             loadAndShowFullScreenAds(context, true);
         } else {
+
             if (intermyCallback != null) {
                 intermyCallback.callbackCall();
                 intermyCallback = null;
             }
         }
 
+        /*String countView = ""+(howManyClicksNew - count_click);
+        Intent intentAdsCountView = new Intent(AdsHelperClass.AdsCountView);
+        intentAdsCountView.putExtra("countView", countView);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intentAdsCountView);
+        Log.e("LocalBroadcastManager: ", "sendBroadcast");*/
 
+    }
+
+
+    public static void refreshCurrentCount(Context context){
+        if(!AdsHelperClass.getIsAdsLayoutHide()) {
+            Intent intentAdsCountView = new Intent(AdsHelperClass.AdsCountView);
+            intentAdsCountView.putExtra("countView", "0");
+            LocalBroadcastManager.getInstance(context).sendBroadcast(intentAdsCountView);
+            Log.e("LocalBroadcastManager: ", "sendBroadcast");
+        }
+    }
+
+    public static boolean isNeedToShowAdsApparelLayout(Context context){
+        if (!hasActiveInternetConnection(context) || AdsHelperClass.getAdShowStatus() == 0 || AdsHelperClass.getinterAdStatus() == 0) {
+            refreshCurrentCount(context);
+            AdsHelperClass.setIsAdsLayoutHide(true);
+            return  false;
+        }
+        if (AdsHelperClass.getFirst_ad_hide() == 1 && AdsHelperClass.getInstanceCount() == 1) {
+            refreshCurrentCount(context);
+            AdsHelperClass.setIsAdsLayoutHide(true);
+            return  false;
+        }
+        int showCount = AdsHelperClass.getFullScreenAdsShowedCount();
+        int totalLimit = AdsHelperClass.getFullScreenLimitCount();
+
+        if (showCount >= totalLimit) {
+            refreshCurrentCount(context);
+            AdsHelperClass.setIsAdsLayoutHide(true);
+            return  false;
+        }
+        return  true;
+    }
+
+    public static String onCreateAdsApparelInClick(){
+        int how_many_clicks  = AdsHelperClass.getinterstitialCount();
+
+
+        PrintLog("AdsClick: ", "count_click : " + count_click + "  how_many_clicks: " + how_many_clicks);
+        PrintLog("AdsClick: ", "interstitialCountMultiplier : " + AdsHelperClass.getInterstitialCountMultiplier());
+        PrintLog("AdsClick: ", "showTime : " + showTime);
+
+        int howManyClicksNew = how_many_clicks;
+        if (AdsHelperClass.getInterstitialCountMultiplier() == 1 && showTime == 0) {
+            howManyClicksNew = how_many_clicks;
+        } else if (AdsHelperClass.getInterstitialCountMultiplier() == 0 && showTime == 0) {
+            howManyClicksNew = how_many_clicks;
+        } else {
+            if (showTime > 0 && AdsHelperClass.getInterstitialCountMultiplier() > 0) {
+                PrintLog("AdsClick: ", "oldShowcount : " + oldShowcount);
+                howManyClicksNew = oldShowcount * AdsHelperClass.getInterstitialCountMultiplier();
+            }
+        }
+
+        PrintLog("AdsClick: ", "howManyClicksNew : " + howManyClicksNew);
+
+
+        if ((AdsHelperClass.getinterstitialCount() > AdsHelperClass.getInterstitialFirstClick() /*&& count_click == AdsHelperClass.getInterstitialFirstClick())*/ && !isFirstTimeShow)) {
+            return ""+(AdsHelperClass.getInterstitialFirstClick() - count_click);
+        }/* else if (AdsHelperClass.getinterstitialCount() > 0 && (count_click > 0 && count_click % howManyClicksNew == 0) *//*&& isFirstTimeShow*//*) {
+            return "1";
+        }*/ else {
+            return ""+(howManyClicksNew - count_click);
+        }
+    }
+    public String adsApparelInClick(){
+        return "ads apparel in "+count_click + "clicks";
     }
 
     private void loadAndShowFullScreenAdsonFirstClick(Context context, int how_many_clicks, boolean isNeedResetCount) {

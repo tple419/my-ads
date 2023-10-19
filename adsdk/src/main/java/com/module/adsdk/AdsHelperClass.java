@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 public class AdsHelperClass {
     public static final String ADMOB = "admob";
+    public static final String AdsCountView = "AdsCountView";
     public static final String ADX = "adx";
     public static final String FACEBOOK = "fb";
     public static final String IRON = "iron";
@@ -675,6 +676,17 @@ public class AdsHelperClass {
     public static void setShowIntro(boolean str) {
         SharedPreferencesClass.getInstance().setBoolean(IS_SHOW_INTRO, str);
     }
+
+
+    public static String IS_ADS_LAYOUT_HIDE = "IS_ADS_LAYOUT_HIDE";
+    public static boolean getIsAdsLayoutHide() {
+        return SharedPreferencesClass.getInstance().getBoolean(IS_ADS_LAYOUT_HIDE, false);
+    }
+
+    public static void setIsAdsLayoutHide(boolean str) {
+        SharedPreferencesClass.getInstance().setBoolean(IS_ADS_LAYOUT_HIDE, str);
+    }
+
 
 
 
