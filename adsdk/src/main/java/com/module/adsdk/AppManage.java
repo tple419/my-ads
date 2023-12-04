@@ -221,6 +221,7 @@ public class AppManage {
         AdsHelperClass.setNative_display_list(appData.getNative_display_list());
         AdsHelperClass.setIsGDPROn(appData.getIsGDPROn());
         AdsHelperClass.setIsGDPROnFailed(appData.getIsGDPROnFailed());
+        AdsHelperClass.setAdsCountHide(appData.getAdsCountHide());
 
     }
 
@@ -1305,6 +1306,11 @@ public class AppManage {
 
     public static boolean isNeedToShowAdsApparelLayout(Context context){
         if (!hasActiveInternetConnection(context) || AdsHelperClass.getAdShowStatus() == 0 || AdsHelperClass.getinterAdStatus() == 0) {
+            refreshCurrentCount(context);
+            AdsHelperClass.setIsAdsLayoutHide(true);
+            return  false;
+        }
+        if (AdsHelperClass.getAdsCountHide() == 1) {
             refreshCurrentCount(context);
             AdsHelperClass.setIsAdsLayoutHide(true);
             return  false;

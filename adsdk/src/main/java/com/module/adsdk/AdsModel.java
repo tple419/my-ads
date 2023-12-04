@@ -4,6 +4,17 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class AdsModel {
+    @SerializedName("adsCountHide")
+    @Expose
+    private int adsCountHide;
+
+    public int getAdsCountHide() {
+        return adsCountHide;
+    }
+
+    public void setAdsCountHide(int adsCountHide) {
+        this.adsCountHide = adsCountHide;
+    }
 
     @SerializedName("Id")
     @Expose

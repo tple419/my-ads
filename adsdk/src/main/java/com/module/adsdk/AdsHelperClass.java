@@ -688,6 +688,13 @@ public class AdsHelperClass {
     }
 
 
+    public static int getAdsCountHide() {
+        return SharedPreferencesClass.getInstance().getInt("adsCountHide", 0);
+    }
+
+    public static void setAdsCountHide(int i) {
+        SharedPreferencesClass.getInstance().setInt("adsCountHide", i);
+    }
 
 
 }
