@@ -86,7 +86,7 @@ public class AppManage {
     private static final String TAG = "AppManage";
 
     public static AtomicBoolean isMobileAdsInitializeCalled = new AtomicBoolean(false);
-    public static int count_click = -1;
+    public static int count_click = 0;
     public static int nativeSmallAdSize = 150;
     public static int nativeAdSize = 270;
     public static int showTime = 0;
