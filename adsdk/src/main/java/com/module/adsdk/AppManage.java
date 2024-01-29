@@ -1,5 +1,6 @@
 package com.module.adsdk;
 
+import static com.applovin.sdk.AppLovinSdkUtils.runOnUiThread;
 import static com.module.adsdk.AdsSplashActivity.PrintLog;
 import static com.module.adsdk.BuildConfig.DEBUG;
 
@@ -21,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -101,6 +103,7 @@ public class AppManage {
     public AdManagerInterstitialAd mAdManagerInterstitialAdPre;
     public ConsentInformation consentInformation;
     ArrayList<String> banner_sequence = new ArrayList<>();
+    ArrayList<String> pre_banner_sequence = new ArrayList<>();
     ArrayList<String> native_sequence = new ArrayList<>();
     ArrayList<String> interstitial_sequence = new ArrayList<>();
     IronSourceBannerLayout mIronSourceBannerLayout;
@@ -222,6 +225,7 @@ public class AppManage {
         AdsHelperClass.setIsGDPROn(appData.getIsGDPROn());
         AdsHelperClass.setIsGDPROnFailed(appData.getIsGDPROnFailed());
         AdsHelperClass.setAdsCountHide(appData.getAdsCountHide());
+        AdsHelperClass.setIsBannerPreloadOn(appData.getIsBannerPreloadOn());
 
     }
 
@@ -2160,8 +2164,40 @@ public class AppManage {
         }
     }
 
-    public void showBanner(ViewGroup banner_container) {
 
+    public void PreLoadBanner(Activity mActivity) {
+
+
+        if (!hasActiveInternetConnection(mActivity)) {
+            return;
+        }
+
+        if (AdsHelperClass.getAdShowStatus() == 0 || AdsHelperClass.getbannerAdStatus() == 0) {
+            return;
+        }
+        String adPlatformSequence = AdsHelperClass.getbannerSequence();
+
+        pre_banner_sequence = new ArrayList<String>();
+        if (!adPlatformSequence.isEmpty()) {
+            String adSequence[] = adPlatformSequence.split(",");
+            pre_banner_sequence.addAll(Arrays.asList(adSequence));
+
+        }
+        if (pre_banner_sequence.size() != 0) {
+            displayPreBanner(pre_banner_sequence.get(0), mActivity);
+        }
+    }
+
+    public void displayPreBanner(String platform,Activity mActivity) {
+        if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
+            loadPreAdmobBanner( mActivity);
+        } else if (platform.equals(AdsHelperClass.ADX) && AdsHelperClass.getAdXAdStatus() == 1) {
+            loadPreAdxBanner(mActivity);
+        }
+    }
+
+
+    public void showBanner(ViewGroup banner_container) {
 
         if (!hasActiveInternetConnection(activity)) {
             banner_container.setVisibility(View.GONE);
@@ -2224,6 +2260,16 @@ public class AppManage {
             }
         }
     }
+     private void nextPreLoadBannerPlatform(Activity mActivity) {
+        if (pre_banner_sequence.size() != 0) {
+            pre_banner_sequence.remove(0);
+            if (pre_banner_sequence.size() != 0) {
+                displayPreBanner(pre_banner_sequence.get(0),mActivity);
+            }
+        }
+    }
+
+
 
     public void displayBanner(String platform, ViewGroup banner_container) {
         if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
@@ -2258,13 +2304,89 @@ public class AppManage {
             return;
         }
         setMinmumHeightForBanner(banner_container);
-        AdManagerAdView adXManagerAdView = new AdManagerAdView(activity);
-        adXManagerAdView.setAdUnitId(AdsHelperClass.getAdxBannerId());
+        if(AdsHelperClass.getIsBannerPreloadOn() == 1 && mAdxPreloadBanner != null){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    banner_container.setVisibility(View.VISIBLE);
+                    banner_container.removeAllViews();
+                    banner_container.addView(mAdxPreloadBanner);
+                }
+            });
+        }else {
+            AdManagerAdView adXManagerAdView = new AdManagerAdView(activity);
+            adXManagerAdView.setAdUnitId(AdsHelperClass.getAdxBannerId());
+            AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
+            AdSize adSize = getAdSize(activity);
+            adXManagerAdView.setAdSize(adSize);
+            adXManagerAdView.loadAd(adRequest);
+            adXManagerAdView.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    super.onAdClosed();
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    super.onAdFailedToLoad(loadAdError);
+                    PrintLog(TAG, "onAdFailedToLoad: AdxBanner " + loadAdError.getMessage());
+
+                    banner_container.removeAllViews();
+                    if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
+                        banner_container.setVisibility(View.INVISIBLE);
+                    } else {
+                        banner_container.setVisibility(visibility);
+                    }
+
+                    nextBannerPlatform(banner_container);
+                }
+
+                @Override
+                public void onAdOpened() {
+                    super.onAdOpened();
+                }
+
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+                    PrintLog(TAG, "onAdLoaded: AdxBanner");
+
+                    banner_container.removeAllViews();
+
+                    banner_container.addView(adXManagerAdView);
+
+                    banner_container.setVisibility(View.VISIBLE);
+
+                }
+
+                @Override
+                public void onAdClicked() {
+                    super.onAdClicked();
+                }
+
+                @Override
+                public void onAdImpression() {
+                    super.onAdImpression();
+                    PrintLog(TAG, "onAdImpression: AdxBanner");
+
+                }
+            });
+        }
+
+
+    }
+    public AdManagerAdView mAdxPreloadBanner = null ;
+    private void loadPreAdxBanner(Activity mActivity) {
+        if (AdsHelperClass.getAdxBannerId().isEmpty()) {
+            return;
+        }
+        mAdxPreloadBanner = new AdManagerAdView(mActivity);
+        mAdxPreloadBanner.setAdUnitId(AdsHelperClass.getAdxBannerId());
         AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
-        AdSize adSize = getAdSize(activity);
-        adXManagerAdView.setAdSize(adSize);
-        adXManagerAdView.loadAd(adRequest);
-        adXManagerAdView.setAdListener(new AdListener() {
+        AdSize adSize = getAdSize(mActivity);
+        mAdxPreloadBanner.setAdSize(adSize);
+        mAdxPreloadBanner.loadAd(adRequest);
+        mAdxPreloadBanner.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
@@ -2274,15 +2396,8 @@ public class AppManage {
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
                 PrintLog(TAG, "onAdFailedToLoad: AdxBanner " + loadAdError.getMessage());
-
-                banner_container.removeAllViews();
-                if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
-                    banner_container.setVisibility(View.INVISIBLE);
-                } else {
-                    banner_container.setVisibility(visibility);
-                }
-
-                nextBannerPlatform(banner_container);
+                mAdxPreloadBanner = null;
+                nextPreLoadBannerPlatform(mActivity);
             }
 
             @Override
@@ -2294,13 +2409,6 @@ public class AppManage {
             public void onAdLoaded() {
                 super.onAdLoaded();
                 PrintLog(TAG, "onAdLoaded: AdxBanner");
-
-                banner_container.removeAllViews();
-
-                banner_container.addView(adXManagerAdView);
-
-                banner_container.setVisibility(View.VISIBLE);
-
             }
 
             @Override
@@ -2319,19 +2427,17 @@ public class AppManage {
 
     }
 
-    private void showAdmobBanner(final ViewGroup banner_container, int visibility) {
+    public AdView mAdViewPreload = null ;
+    private void loadPreAdmobBanner(Activity mActivity) {
         if (AdsHelperClass.getAdmobBannerId().isEmpty()) {
-            banner_container.setVisibility(View.INVISIBLE);
             return;
         }
-
-        setMinmumHeightForBanner(banner_container);
-        final AdView mAdView = new AdView(activity);
-        mAdView.setAdSize(AdSize.BANNER);
-        mAdView.setAdUnitId(AdsHelperClass.getAdmobBannerId());
+        mAdViewPreload = new AdView(mActivity);
+        mAdViewPreload.setAdSize(AdSize.BANNER);
+        mAdViewPreload.setAdUnitId(AdsHelperClass.getAdmobBannerId());
         AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
-        mAdView.setAdListener(new AdListener() {
+        mAdViewPreload.loadAd(adRequest);
+        mAdViewPreload.setAdListener(new AdListener() {
             @Override
             public void onAdClosed() {
                 super.onAdClosed();
@@ -2340,16 +2446,9 @@ public class AppManage {
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
+                mAdViewPreload = null;
                 PrintLog(TAG, "onAdFailedToLoad:banner " + loadAdError.getMessage());
-
-
-                banner_container.removeAllViews();
-                if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
-                    banner_container.setVisibility(View.INVISIBLE);
-                } else {
-                    banner_container.setVisibility(visibility);
-                }
-                nextBannerPlatform(banner_container);
+                nextPreLoadBannerPlatform(mActivity);
             }
 
             @Override
@@ -2360,9 +2459,6 @@ public class AppManage {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-                banner_container.setVisibility(View.VISIBLE);
-                banner_container.removeAllViews();
-                banner_container.addView(mAdView);
             }
 
             @Override
@@ -2374,9 +2470,92 @@ public class AppManage {
             public void onAdImpression() {
                 super.onAdImpression();
                 PrintLog(TAG, "onAdImpression: AdmobBanner");
-
             }
         });
+
+    }
+    public static void removeSelf(View childView) {
+        if (childView == null) {
+            return;
+        }
+        ViewGroup parentView = (ViewGroup) childView.getParent();
+        if (parentView != null) {
+            parentView.removeView(childView);
+        }
+    }
+
+    private void showAdmobBanner(final ViewGroup banner_container, int visibility) {
+        if (AdsHelperClass.getAdmobBannerId().isEmpty()) {
+            banner_container.setVisibility(View.INVISIBLE);
+            return;
+        }
+
+        setMinmumHeightForBanner(banner_container);
+
+        if(AdsHelperClass.getIsBannerPreloadOn() == 1 && mAdViewPreload != null){
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    banner_container.setVisibility(View.VISIBLE);
+                    banner_container.removeAllViews();
+                    banner_container.addView(mAdViewPreload);
+
+                }
+            });
+        }else {
+            final AdView mAdView = new AdView(activity);
+            mAdView.setAdSize(AdSize.BANNER);
+            mAdView.setAdUnitId(AdsHelperClass.getAdmobBannerId());
+            AdRequest adRequest = new AdRequest.Builder().build();
+            mAdView.loadAd(adRequest);
+            mAdView.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    super.onAdClosed();
+                }
+
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    super.onAdFailedToLoad(loadAdError);
+                    PrintLog(TAG, "onAdFailedToLoad:banner " + loadAdError.getMessage());
+
+
+                    banner_container.removeAllViews();
+                    if (AdsHelperClass.getIsBannerSpaceVisible() == 1) {
+                        banner_container.setVisibility(View.INVISIBLE);
+                    } else {
+                        banner_container.setVisibility(visibility);
+                    }
+                    nextBannerPlatform(banner_container);
+                }
+
+                @Override
+                public void onAdOpened() {
+                    super.onAdOpened();
+                }
+
+                @Override
+                public void onAdLoaded() {
+                    super.onAdLoaded();
+                    banner_container.setVisibility(View.VISIBLE);
+                    banner_container.removeAllViews();
+                    banner_container.addView(mAdView);
+                }
+
+                @Override
+                public void onAdClicked() {
+                    super.onAdClicked();
+                }
+
+                @Override
+                public void onAdImpression() {
+                    super.onAdImpression();
+                    PrintLog(TAG, "onAdImpression: AdmobBanner");
+
+                }
+            });
+        }
 
     }
 

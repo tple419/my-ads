@@ -47,6 +47,10 @@ public class AdsSplashActivity extends AppCompatActivity {
                         AppManage.getInstance(activity).PreLoadNative(1);
                     }
                 }
+                if (AdsHelperClass.getIsBannerPreloadOn() == 1) {
+                    AppManage.getInstance(activity).PreLoadBanner(activity);
+                }
+
                 manager = new AppOpenManagerSplash(activity);
 
                 new Handler(Looper.myLooper()).postDelayed(() -> {
