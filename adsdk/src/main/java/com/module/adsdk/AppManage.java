@@ -103,7 +103,7 @@ public class AppManage {
     public AdManagerInterstitialAd mAdManagerInterstitialAdPre;
     public ConsentInformation consentInformation;
     ArrayList<String> banner_sequence = new ArrayList<>();
-    ArrayList<String> pre_banner_sequence = new ArrayList<>();
+
     ArrayList<String> native_sequence = new ArrayList<>();
     ArrayList<String> interstitial_sequence = new ArrayList<>();
     IronSourceBannerLayout mIronSourceBannerLayout;
@@ -225,7 +225,6 @@ public class AppManage {
         AdsHelperClass.setIsGDPROn(appData.getIsGDPROn());
         AdsHelperClass.setIsGDPROnFailed(appData.getIsGDPROnFailed());
         AdsHelperClass.setAdsCountHide(appData.getAdsCountHide());
-        AdsHelperClass.setIsBannerPreloadOn(appData.getIsBannerPreloadOn());
 
     }
 
@@ -2165,36 +2164,6 @@ public class AppManage {
     }
 
 
-    public void PreLoadBanner(Activity mActivity) {
-
-
-        if (!hasActiveInternetConnection(mActivity)) {
-            return;
-        }
-
-        if (AdsHelperClass.getAdShowStatus() == 0 || AdsHelperClass.getbannerAdStatus() == 0) {
-            return;
-        }
-        String adPlatformSequence = AdsHelperClass.getbannerSequence();
-
-        pre_banner_sequence = new ArrayList<String>();
-        if (!adPlatformSequence.isEmpty()) {
-            String adSequence[] = adPlatformSequence.split(",");
-            pre_banner_sequence.addAll(Arrays.asList(adSequence));
-
-        }
-        if (pre_banner_sequence.size() != 0) {
-            displayPreBanner(pre_banner_sequence.get(0), mActivity);
-        }
-    }
-
-    public void displayPreBanner(String platform,Activity mActivity) {
-        if (platform.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
-            loadPreAdmobBanner( mActivity);
-        } else if (platform.equals(AdsHelperClass.ADX) && AdsHelperClass.getAdXAdStatus() == 1) {
-            loadPreAdxBanner(mActivity);
-        }
-    }
 
 
     public void showBanner(ViewGroup banner_container) {
@@ -2260,14 +2229,7 @@ public class AppManage {
             }
         }
     }
-     private void nextPreLoadBannerPlatform(Activity mActivity) {
-        if (pre_banner_sequence.size() != 0) {
-            pre_banner_sequence.remove(0);
-            if (pre_banner_sequence.size() != 0) {
-                displayPreBanner(pre_banner_sequence.get(0),mActivity);
-            }
-        }
-    }
+
 
 
 
@@ -2304,16 +2266,7 @@ public class AppManage {
             return;
         }
         setMinmumHeightForBanner(banner_container);
-        if(AdsHelperClass.getIsBannerPreloadOn() == 1 && mAdxPreloadBanner != null){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    banner_container.setVisibility(View.VISIBLE);
-                    banner_container.removeAllViews();
-                    banner_container.addView(mAdxPreloadBanner);
-                }
-            });
-        }else {
+
             AdManagerAdView adXManagerAdView = new AdManagerAdView(activity);
             adXManagerAdView.setAdUnitId(AdsHelperClass.getAdxBannerId());
             AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
@@ -2371,109 +2324,13 @@ public class AppManage {
 
                 }
             });
-        }
-
-
-    }
-    public AdManagerAdView mAdxPreloadBanner = null ;
-    private void loadPreAdxBanner(Activity mActivity) {
-        if (AdsHelperClass.getAdxBannerId().isEmpty()) {
-            return;
-        }
-        mAdxPreloadBanner = new AdManagerAdView(mActivity);
-        mAdxPreloadBanner.setAdUnitId(AdsHelperClass.getAdxBannerId());
-        AdManagerAdRequest adRequest = new AdManagerAdRequest.Builder().build();
-        AdSize adSize = getAdSize(mActivity);
-        mAdxPreloadBanner.setAdSize(adSize);
-        mAdxPreloadBanner.loadAd(adRequest);
-        mAdxPreloadBanner.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-            }
-
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                super.onAdFailedToLoad(loadAdError);
-                PrintLog(TAG, "onAdFailedToLoad: AdxBanner " + loadAdError.getMessage());
-                mAdxPreloadBanner = null;
-                nextPreLoadBannerPlatform(mActivity);
-            }
-
-            @Override
-            public void onAdOpened() {
-                super.onAdOpened();
-            }
-
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-                PrintLog(TAG, "onAdLoaded: AdxBanner");
-            }
-
-            @Override
-            public void onAdClicked() {
-                super.onAdClicked();
-            }
-
-            @Override
-            public void onAdImpression() {
-                super.onAdImpression();
-                PrintLog(TAG, "onAdImpression: AdxBanner");
-
-            }
-        });
 
 
     }
 
-    public AdView mAdViewPreload = null ;
-    private void loadPreAdmobBanner(Activity mActivity) {
-        if (AdsHelperClass.getAdmobBannerId().isEmpty()) {
-            return;
-        }
-        mAdViewPreload = new AdView(mActivity);
-        mAdViewPreload.setAdSize(AdSize.BANNER);
-        mAdViewPreload.setAdUnitId(AdsHelperClass.getAdmobBannerId());
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdViewPreload.loadAd(adRequest);
-        mAdViewPreload.setAdListener(new AdListener() {
-            @Override
-            public void onAdClosed() {
-                super.onAdClosed();
-            }
 
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                super.onAdFailedToLoad(loadAdError);
-                mAdViewPreload = null;
-                PrintLog(TAG, "onAdFailedToLoad:banner " + loadAdError.getMessage());
-                nextPreLoadBannerPlatform(mActivity);
-            }
 
-            @Override
-            public void onAdOpened() {
-                super.onAdOpened();
-            }
 
-            @Override
-            public void onAdLoaded() {
-                super.onAdLoaded();
-            }
-
-            @Override
-            public void onAdClicked() {
-                super.onAdClicked();
-            }
-
-            @Override
-            public void onAdImpression() {
-                super.onAdImpression();
-                PrintLog(TAG, "onAdImpression: AdmobBanner");
-            }
-        });
-
-    }
     public static void removeSelf(View childView) {
         if (childView == null) {
             return;
@@ -2492,18 +2349,7 @@ public class AppManage {
 
         setMinmumHeightForBanner(banner_container);
 
-        if(AdsHelperClass.getIsBannerPreloadOn() == 1 && mAdViewPreload != null){
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
 
-                    banner_container.setVisibility(View.VISIBLE);
-                    banner_container.removeAllViews();
-                    banner_container.addView(mAdViewPreload);
-
-                }
-            });
-        }else {
             final AdView mAdView = new AdView(activity);
             mAdView.setAdSize(AdSize.BANNER);
             mAdView.setAdUnitId(AdsHelperClass.getAdmobBannerId());
@@ -2555,8 +2401,6 @@ public class AppManage {
 
                 }
             });
-        }
-
     }
 
     private void showFBBanner(final ViewGroup banner_container, int visibility) {
@@ -2989,11 +2833,20 @@ public class AppManage {
         }
 
         if (isNeedSpace) {
-            final float scale = activity.getResources().getDisplayMetrics().density;
-            int pixels = (int) (nativeAdSize * scale + 0.5f);
+            if(nativeViewType == 1){
+                final float scale = activity.getResources().getDisplayMetrics().density;
+                int pixels = (int) (nativeAdSize * scale + 0.5f);
 
-            nativeAdContainer.getLayoutParams().height = pixels;
-            nativeAdContainer.requestLayout();
+                nativeAdContainer.getLayoutParams().height = pixels;
+                nativeAdContainer.requestLayout();
+            }else if(nativeViewType == 2){
+                final float scale = activity.getResources().getDisplayMetrics().density;
+                int pixels = (int) (nativeSmallAdSize * scale + 0.5f);
+
+                nativeAdContainer.getLayoutParams().height = pixels;
+                nativeAdContainer.requestLayout();
+            }
+
         }
 
         if (isNativeInRecyclerview) {

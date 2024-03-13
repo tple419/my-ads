@@ -696,13 +696,5 @@ public class AdsHelperClass {
         SharedPreferencesClass.getInstance().setInt("adsCountHide", i);
     }
 
-  public static int getIsBannerPreloadOn() {
-        return SharedPreferencesClass.getInstance().getInt("isBannerPreloadOn", 0);
-    }
-
-    public static void setIsBannerPreloadOn(int i) {
-        SharedPreferencesClass.getInstance().setInt("isBannerPreloadOn", i);
-    }
-
 
 }

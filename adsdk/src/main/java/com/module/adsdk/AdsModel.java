@@ -38,17 +38,6 @@ public class AdsModel {
     @Expose
     private int isOnLoadNative = 0;
 
- @SerializedName("isBannerPreloadOn")
-    @Expose
-    private int isBannerPreloadOn = 0;
-
-    public int getIsBannerPreloadOn() {
-        return isBannerPreloadOn;
-    }
-
-    public void setIsBannerPreloadOn(int isBannerPreloadOn) {
-        this.isBannerPreloadOn = isBannerPreloadOn;
-    }
 
     @SerializedName("isBannerSpaceVisible")
     @Expose
