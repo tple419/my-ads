@@ -90,6 +90,7 @@ public class AppManage {
     public static AtomicBoolean isMobileAdsInitializeCalled = new AtomicBoolean(false);
     public static int count_click = 0;
     public static int nativeSmallAdSize = 150;
+    public static int nativeSmallAdSize2 = 70;
     public static int nativeAdSize = 270;
     public static int showTime = 0;
     public static SharedPreferences mysharedpreferences;
@@ -2845,13 +2846,20 @@ public class AppManage {
 
                 nativeAdContainer.getLayoutParams().height = pixels;
                 nativeAdContainer.requestLayout();
+            }else if(nativeViewType == 3){
+                final float scale = activity.getResources().getDisplayMetrics().density;
+                int pixels = (int) (nativeSmallAdSize2 * scale + 0.5f);
+
+                nativeAdContainer.getLayoutParams().height = pixels;
+                nativeAdContainer.requestLayout();
             }
 
         }
 
         if (isNativeInRecyclerview) {
             //preload
-            preLoadNativeAdapter(nativeAdContainer, isNeedSpace, nativeViewType);
+//            preLoadNativeAdapter(nativeAdContainer, isNeedSpace, nativeViewType);
+            preLoadAndShowNativeAdapter(nativeAdContainer, isNeedSpace, nativeViewType);
         } else {
             if (AdsHelperClass.getIsOnLoadNative() == 1) {
                 onLoadshowNative(nativeAdContainer, isNeedSpace, nativeViewType);
@@ -2931,6 +2939,318 @@ public class AppManage {
             }
         }
     }
+
+
+    public void preLoadAndShowNativeAdapter(ViewGroup nativeAdContainer, boolean isNeedSpace,/*boolean isNativeSmall,*/int nativeViewType) {
+        if (!hasActiveInternetConnection(activity)) {
+            return;
+        }
+
+        if (AdsHelperClass.getAdShowStatus() == 0 || AdsHelperClass.getnativeAdStatus() == 0) {
+            return;
+        }
+        String adPlatformSequence = AdsHelperClass.getnativeSequence();
+        native_sequence = new ArrayList<String>();
+        if (!adPlatformSequence.isEmpty()) {
+            String adSequence[] = adPlatformSequence.split(",");
+            for (int i = 0; i < adSequence.length; i++) {
+                native_sequence.add(adSequence[i]);
+            }
+
+        }
+        if (native_sequence.size() != 0) {
+            if (preAdmobNative != null && native_sequence.get(0).equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
+                PrintLog(TAG, "PreLoadNative: ShowLoaded");
+                new Inflate_ADS(activity).inflate_NATIV_ADMOB(preAdmobNative, nativeAdContainer, isNeedSpace,/*isNativeSmall,*/nativeViewType);
+            } else if (preAdxNative != null && native_sequence.get(0).equals(AdsHelperClass.ADX) && AdsHelperClass.getAdXAdStatus() == 1) {
+                PrintLog(TAG, "PreLoadNative: ShowLoaded");
+                new Inflate_ADS(activity).inflate_NATIV_ADMOB(preAdxNative, nativeAdContainer, isNeedSpace,/*isNativeSmall,*/nativeViewType);
+            } else if (preFbNative != null && native_sequence.get(0).equals(AdsHelperClass.FACEBOOK) && AdsHelperClass.getFBAdStatus() == 1) {
+                PrintLog(TAG, "PreLoadNative: ShowLoaded");
+                new Inflate_ADS(activity).inflate_NATIV_FB(preFbNative, nativeAdContainer, isNeedSpace, nativeViewType);
+
+            } else if (preIronSourceNativeLayout != null && native_sequence.get(0).equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+                PrintLog(TAG, "PreLoadNative: ShowLoaded");
+                if (isIronNativePreloaded) {
+                    FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT,
+                            FrameLayout.LayoutParams.MATCH_PARENT);
+                    nativeAdContainer.removeAllViews();
+                    try {
+                        nativeAdContainer.addView(preIronSourceNativeLayout, 0, layoutParams);
+                    } catch (Exception e) {
+                        if (preIronSourceNativeLayout.getParent() != null) {
+                            ((ViewGroup) preIronSourceNativeLayout.getParent()).removeView(preIronSourceNativeLayout); // <- fix
+                        }
+                        nativeAdContainer.addView(preIronSourceNativeLayout);
+                        PrintLog(TAG, "PreLoadNative: Applovin " + e.getMessage());
+                    }
+                    nativeAdContainer.setVisibility(View.VISIBLE);
+                }
+
+            } else if (preMaxNativeAdView != null && native_sequence.get(0).equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
+                PrintLog(TAG, "PreLoadNative: Applovin ShowLoaded");
+
+                nativeAdContainer.setVisibility(View.VISIBLE);
+                // Add ad view to view.
+                nativeAdContainer.removeAllViews();
+
+                try {
+                    nativeAdContainer.addView(preMaxNativeAdView);
+                } catch (Exception e) {
+                    if (preMaxNativeAdView.getParent() != null) {
+                        ((ViewGroup) preMaxNativeAdView.getParent()).removeView(preMaxNativeAdView); // <- fix
+                    }
+                    nativeAdContainer.addView(preMaxNativeAdView);
+                    PrintLog(TAG, "PreLoadNative: Applovin " + e.getMessage());
+                }
+
+            } else {
+                PrintLog(TAG, "PreLoadNative: NotLoaded");
+                PreLoadNativeRecyclerview(nativeViewType, nativeAdContainer, isNeedSpace);
+            }
+        }
+    }
+
+    public void PreLoadNativeRecyclerview(int nativeViewType,ViewGroup nativeAdContainer, boolean isNeedSpace) {
+
+        if (!hasActiveInternetConnection(activity)) {
+
+            return;
+        }
+
+        if (AdsHelperClass.getAdShowStatus() == 0 || AdsHelperClass.getnativeAdStatus() == 0) {
+
+            return;
+        }
+
+        String adPlatformSequence = AdsHelperClass.getnativeSequence();
+        native_sequence = new ArrayList<String>();
+        if (!adPlatformSequence.isEmpty()) {
+            String adSequence[] = adPlatformSequence.split(",");
+            for (int i = 0; i < adSequence.length; i++) {
+                native_sequence.add(adSequence[i]);
+            }
+
+        }
+
+
+        if (native_sequence.size() != 0) {
+            LoadPreloadNativeRecyclerview(native_sequence.get(0), nativeViewType,nativeAdContainer,isNeedSpace);
+        }
+
+
+    }
+
+    private void LoadPreloadNativeRecyclerview(String s, int nativeViewType,ViewGroup nativeAdContainer, boolean isNeedSpace) {
+        if (s.equals(AdsHelperClass.ADMOB) && AdsHelperClass.getAdmobAdStatus() == 1) {
+
+            if (AdsHelperClass.getAdmobNativeId().isEmpty()) {
+                return;
+            }
+
+            if (preAdmobNative == null) {
+                final AdLoader adLoader = new AdLoader.Builder(activity, AdsHelperClass.getAdmobNativeId())
+                        .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                            @Override
+                            public void onNativeAdLoaded(NativeAd nativeAd) {
+                                // Show the ad.
+                                preAdmobNative = nativeAd;
+                                new Inflate_ADS(activity).inflate_NATIV_ADMOB(preAdmobNative, nativeAdContainer, isNeedSpace,nativeViewType);
+                            }
+                        })
+                        .withAdListener(new AdListener() {
+                            @Override
+                            public void onAdFailedToLoad(LoadAdError adError) {
+                                PrintLog(TAG, "onAdFailedToLoad:native " + adError.getMessage());
+                                nextPreNativePlatform(nativeViewType);
+
+                            }
+                        })
+
+                        .build();
+
+                adLoader.loadAd(new AdRequest.Builder().build());
+            } else {
+                PrintLog(TAG, "PreLoadNative: AlreadyLoaded");
+            }
+        } else if (s.equals(AdsHelperClass.ADX) && AdsHelperClass.getAdXAdStatus() == 1) {
+
+            if (AdsHelperClass.getAdxNativeId().isEmpty()) {
+                return;
+            }
+
+            if (preAdxNative == null) {
+                AdLoader adLoader = new AdLoader.Builder(activity, AdsHelperClass.getAdxNativeId())
+                        .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
+                            @Override
+                            public void onNativeAdLoaded(NativeAd nativeAd) {
+                                // Show the ad.
+                                PrintLog(TAG, "onNativeAdLoaded: Adx");
+                                preAdxNative = nativeAd;
+                                new Inflate_ADS(activity).inflate_NATIV_ADMOB(preAdxNative, nativeAdContainer, isNeedSpace,/*isNativeSmall,*/nativeViewType);
+                            }
+                        })
+                        .withAdListener(new AdListener() {
+                            @Override
+                            public void onAdFailedToLoad(LoadAdError adError) {
+                                // Handle the failure by logging, altering the UI, and so on.
+                                PrintLog(TAG, "onAdFailedToLoad: Adx" + adError.getMessage());
+                                nextPreNativePlatform(/*isNativeSmall,*/nativeViewType);
+                            }
+                        })
+                        .build();
+
+                adLoader.loadAd(new AdRequest.Builder().build());
+            } else {
+                PrintLog(TAG, "PreLoadNative: AlreadyLoaded");
+            }
+        } else if (s.equals(AdsHelperClass.APPLOVIN) && AdsHelperClass.getApplovinAdStatus() == 1) {
+
+            if (AdsHelperClass.getapplovinnative().isEmpty()) {
+                return;
+            }
+
+            if (preMaxNativeAdView == null) {
+
+                MaxNativeAdLoader nativeAdLoader = new MaxNativeAdLoader(AdsHelperClass.getapplovinnative(), activity);
+                nativeAdLoader.loadAd(createNativeAdView(activity));
+                nativeAdLoader.setNativeAdListener(new MaxNativeAdListener() {
+                    @Override
+                    public void onNativeAdLoaded(final MaxNativeAdView nativeAdView, final MaxAd ad) {
+
+                        PrintLog(TAG, "onNativeAdLoaded: ");
+                        preMaxNativeAdView = nativeAdView;
+                        nativeAdContainer.setVisibility(View.VISIBLE);
+                        // Add ad view to view.
+                        nativeAdContainer.removeAllViews();
+
+                        try {
+                            nativeAdContainer.addView(preMaxNativeAdView);
+                        } catch (Exception e) {
+                            if (preMaxNativeAdView.getParent() != null) {
+                                ((ViewGroup) preMaxNativeAdView.getParent()).removeView(preMaxNativeAdView); // <- fix
+                            }
+                            nativeAdContainer.addView(preMaxNativeAdView);
+                            PrintLog(TAG, "PreLoadNative: Applovin " + e.getMessage());
+                        }
+                    }
+
+                    @Override
+                    public void onNativeAdLoadFailed(final String adUnitId, final MaxError error) {
+
+                        PrintLog(TAG, "onNativeAdLoadFailed: ");
+                        nextPreNativePlatform(nativeViewType);
+
+                    }
+
+                    @Override
+                    public void onNativeAdClicked(final MaxAd ad) {
+                        // Optional click callback
+                    }
+                });
+            } else {
+                PrintLog(TAG, "PreLoadNative: AlreadyLoaded");
+            }
+        } else if (s.equals(AdsHelperClass.IRON) && AdsHelperClass.getIronSourceAdStatus() == 1) {
+
+            if (AdsHelperClass.getironappkey().isEmpty()) {
+                return;
+            }
+            if (preIronSourceNativeLayout == null) {
+
+                ISBannerSize size = ISBannerSize.RECTANGLE;
+
+                preIronSourceNativeLayout = IronSource.createBanner(activity, size);
+
+                // add IronSourceBanner to your container
+
+
+                // set the banner listener
+                preIronSourceNativeLayout.setBannerListener(new BannerListener() {
+                    @Override
+                    public void onBannerAdLoaded() {
+                        // since banner container was "gone" by default, we need to make it visible as soon as the banner is ready
+                        isIronNativePreloaded = true;
+                    }
+
+                    @Override
+                    public void onBannerAdLoadFailed(IronSourceError error) {
+                        PrintLog(TAG, "onAdFailedToLoad:native " + error.getErrorMessage());
+                        nextPreNativePlatform(nativeViewType);
+                        isIronNativePreloaded = false;
+
+                    }
+
+                    @Override
+                    public void onBannerAdClicked() {
+                    }
+
+                    @Override
+                    public void onBannerAdScreenPresented() {
+                    }
+
+                    @Override
+                    public void onBannerAdScreenDismissed() {
+                    }
+
+                    @Override
+                    public void onBannerAdLeftApplication() {
+                    }
+                });
+                // load ad into the created banner
+                IronSource.loadBanner(preIronSourceNativeLayout);
+
+
+            } else {
+                PrintLog(TAG, "PreLoadNative: AlreadyLoaded");
+            }
+        } else if (s.equals(AdsHelperClass.FACEBOOK) && AdsHelperClass.getFBAdStatus() == 1) {
+
+            if (AdsHelperClass.getFBNativeId().isEmpty()) {
+                return;
+            }
+            if (preFbNative == null) {
+                final com.facebook.ads.NativeAd nativeAd1 = new com.facebook.ads.NativeAd(activity, AdsHelperClass.getFBNativeId());
+                nativeAd1.loadAd(nativeAd1.buildLoadAdConfig()
+                        .withMediaCacheFlag(NativeAdBase.MediaCacheFlag.ALL)/*Pre-cache all (icon, images, and video), default*/
+                        .withAdListener(new NativeAdListener() {
+                            @Override
+                            public void onMediaDownloaded(Ad ad) {
+
+                            }
+
+                            @Override
+                            public void onError(Ad ad, AdError adError) {
+                                PrintLog(TAG, "onError:FBNative " + adError.getErrorMessage());
+
+                                nextPreNativePlatform(nativeViewType);
+                            }
+
+                            @Override
+                            public void onAdLoaded(Ad ad) {
+                                PrintLog(TAG, "onAdLoaded: ");
+                                preFbNative = nativeAd1;
+
+                                new Inflate_ADS(activity).inflate_NATIV_FB(preFbNative, nativeAdContainer, isNeedSpace, nativeViewType);
+                            }
+
+                            @Override
+                            public void onAdClicked(Ad ad) {
+
+                            }
+
+                            @Override
+                            public void onLoggingImpression(Ad ad) {
+
+                            }
+                        })
+                        .build());
+            } else {
+                PrintLog(TAG, "PreLoadNative: AlreadyLoaded");
+            }
+        }
+    }
+
 
 
 

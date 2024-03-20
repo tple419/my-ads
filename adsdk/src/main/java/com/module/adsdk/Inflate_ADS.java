@@ -40,6 +40,8 @@ public class Inflate_ADS {
             adView =  (NativeAdView) inflater.inflate(R.layout.ads_native_admob_adview, null);
         }else if(nativeViewType  == 2){
             adView =  (NativeAdView) inflater.inflate(R.layout.ads_native_admob_adview_small, null);
+        }else if(nativeViewType  == 3){
+            adView =  (NativeAdView) inflater.inflate(R.layout.ads_native_admob_adview_small2, null);
         }else {
             adView =  (NativeAdView) inflater.inflate(R.layout.ads_native_admob_adview, null);
         }
@@ -166,6 +168,10 @@ public class Inflate_ADS {
         com.facebook.ads.NativeAdLayout adView = null;
         if(nativeViewType == 1){
             adView = (com.facebook.ads.NativeAdLayout) inflater.inflate(R.layout.ads_native_fb_adview, null);
+        }else if(nativeViewType == 2) {
+             adView = (com.facebook.ads.NativeAdLayout) inflater.inflate(R.layout.ads_native_fb_adview_small, null);
+        }else if(nativeViewType == 3) {
+            adView = (com.facebook.ads.NativeAdLayout) inflater.inflate(R.layout.ads_native_fb_adview_small2, null);
         }else {
              adView = (com.facebook.ads.NativeAdLayout) inflater.inflate(R.layout.ads_native_fb_adview_small, null);
         }
