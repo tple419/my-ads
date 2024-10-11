@@ -20,9 +20,6 @@ public class AdsSplashActivity extends AppCompatActivity {
     private AppOpenManagerSplash manager;
 
     public static void PrintLog(String s, String s1) {
-        if (BuildConfig.DEBUG) {
-            Log.d(s, s1);
-        }
 
     }
 
