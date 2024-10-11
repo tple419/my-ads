@@ -1,6 +1,8 @@
 package com.module.adsdk;
 
+import static com.applovin.sdk.AppLovinSdkUtils.runOnUiThread;
 import static com.module.adsdk.AdsSplashActivity.PrintLog;
+import static com.module.adsdk.BuildConfig.DEBUG;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -56,6 +59,7 @@ import com.google.android.gms.ads.admanager.AdManagerAdRequest;
 import com.google.android.gms.ads.admanager.AdManagerAdView;
 import com.google.android.gms.ads.admanager.AdManagerInterstitialAd;
 import com.google.android.gms.ads.admanager.AdManagerInterstitialAdLoadCallback;
+import com.google.android.gms.ads.formats.NativeAdOptions;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
@@ -284,10 +288,10 @@ public class AppManage {
 
                 }
             }).initialize();
-            /*if (DEBUG) {
+            if (DEBUG) {
                 AdSettings.turnOnSDKDebugger(activity);
                 AdSettings.addTestDevice("4bd00c31-5290-4b84-a7ce-8f7c92df2da0");
-            }*/
+            }
 
         }
 
@@ -311,7 +315,11 @@ public class AppManage {
         if (AdsHelperClass.getIronSourceAdStatus() == 1) {
             String adUnitId;
 
-            adUnitId = AdsHelperClass.getironappkey();
+            if (BuildConfig.DEBUG)
+                adUnitId = activity.getString(R.string.ads_iron_app_key);
+            else {
+                adUnitId = AdsHelperClass.getironappkey();
+            }
             if (TextUtils.isEmpty(adUnitId)) {
                 return;
             }
