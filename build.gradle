@@ -1,13 +1,27 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-//buildscript {
-//
-//    dependencies {
-//        classpath 'com.android.tools.build:gradle:8.1.4'
-//
-//    }
-//}
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        maven {
+            url 'https://android-sdk.is.com/'
+        }
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.4'
 
-plugins {
-    id 'com.android.application' version '8.0.0' apply false
-    id 'com.android.library' version '8.0.0' apply false
+    }
+}
+
+allprojects {
+    repositories {
+        // Add repository
+        google()
+        mavenCentral()
+        maven {
+            url 'https://android-sdk.is.com/'
+        }
+        maven { url 'https://jitpack.io' }
+    }
 }
